@@ -1,5 +1,5 @@
 # WSBinder
-FFXI Windower v4 addon that dynamically binds weapon skills based on currently-equipped weapon and current job/sub job by pulling from pre-defined table. 
+FFXI Windower v4 addon that dynamically binds weapon skills based on currently-equipped weapon and current job/sub job by pulling from pre-defined table.
 
 ## Descripton
 
@@ -28,10 +28,12 @@ lua load WSBinder
 ### Addon Commands
 
 There are some commands you can use to interact with the WSBinder addon from in-game chat. Commands follow the format of `//wsb <commands>` (without brackets <>). The following are valid commands:
-* `help` - prints out a bunch of helpful messages in the chat log
-* `targetmode main` - toggles the target mode for main hand WS's between `<t>` and `<stnpc>`
-* `targetmode ranged` - toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>`
-* `reload` - reloads the addon
+| Command           | Alt Cmd     | Description                                                              |
+| ----------------- | ----------- | ------------------------------------------------------------------------ |
+| `help`            | `h`         | Prints out a bunch of helpful messages in the chat log                   |
+| `targetmode main` | `tm m`      | Toggles the target mode for main hand WS's between `<t>` and `<stnpc>`   |
+| `targetmode main` | `tm m`      | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
+| `reload`          | `r`         | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
 
 
 ### Changing keybinds

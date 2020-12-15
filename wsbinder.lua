@@ -396,11 +396,7 @@ end)
 
 -- Hook into job/subjob change event (happens AFTER job has finished changing)
 windower.register_event('job change', function(main_job_id, main_job_level, sub_job_id, sub_job_level)
-  -- For some reason, this event may fire twice. The first time, the game does not actually detect
-  -- the player's new job. Enforce a check to ensure it has.
-  if main_job_id == nil then return end
-
-  is_changing_job = false
+  is_changing_job = false -- Disable this flag so keybinds can update again
 
   update_weaponskill_binds(true)
 end)
@@ -408,7 +404,7 @@ end)
 -- Hook into job/subjob change event (happens BEFORE job starts changing)
 windower.register_event('outgoing chunk', function(id, data, modified, injected, blocked)
   if id == 0x100 then -- Send lockstyle command to server
-    is_changing_job = true
+    is_changing_job = true -- Set this flag to lock keybind updating until job change is complete
     unbind_ws(latest_ws_binds)
   end
 end)

@@ -397,8 +397,10 @@ windower.register_event('prerender',function()
   if frame_count%15 == 0 and windower.ffxi.get_info().logged_in and windower.ffxi.get_player() then
     check_equipped()
     update_weaponskill_binds()
+    frame_count = 0
+  else
+    frame_count = frame_count + 1
   end
-  frame_count = frame_count + 1
 end)
 
 -- Hook into job/subjob change event (happens AFTER job has finished changing)

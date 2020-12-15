@@ -29,8 +29,8 @@ lua load WSBinder
 
 There are some commands you can use to interact with the WSBinder addon from in-game chat. Commands follow the format of `//wsb <commands>` (without brackets <>). The following are valid commands:
 * `help` - prints out a bunch of helpful messages in the chat log
-* `targetmode <type>` - toggles the target mode between `<t>` and `<stnpc>`
-  * `<type>` can be `main` or `ranged`
+* `targetmode main` - toggles the target mode for main hand WS's between `<t>` and `<stnpc>`
+* `targetmode ranged` - toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>`
 * `reload` - reloads the addon
 
 

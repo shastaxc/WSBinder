@@ -25,6 +25,15 @@ lua load WSBinder
 
 ## Usage
 
+### Addon Commands
+
+There are some commands you can use to interact with the WSBinder addon from in-game chat. Commands follow the format of `//wsb <commands>` (without brackets <>). The following are valid commands:
+* `help` - prints out a bunch of helpful messages in the chat log
+* `targetmode <type>` - toggles the target mode between `<t>` and `<stnpc>`
+  * `<type>` can be `main` or `ranged`
+* `reload` - reloads the addon
+
+
 ### Changing keybinds
 
 You can change the default keybinds by editing the `ws_binds` table in the `keybind_map.lua` file. The syntax is as follows:

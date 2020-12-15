@@ -1,8 +1,7 @@
 # WSBinder
 FFXI Windower v4 addon that dynamically binds weapon skills based on currently-equipped weapon and current job/sub job by pulling from pre-defined table. 
 
-## Dynamic weaponskill keybinds
-### Descripton
+## Descripton
 
 Provides weaponskill keybinds that change dynamically based on your current weapon. This function has the
 following benefits:
@@ -15,7 +14,7 @@ dagger WS keybinds and then set your sword keybinds.
 Override functionality is included so that you can define your own keybinds in a global file without having
 to modify this library lua.
 
-### Implementation
+## Implementation
 
 1. Create a folder in your Windower/addons folder and name it `WSBinder`.
 2. Place all files from this repository into the `WSBinder` folder.
@@ -24,16 +23,9 @@ to modify this library lua.
 lua load WSBinder
 ```
 
-If you want to use `<stnpc>` targeting instead of the default `<t>` for your weaponskills you can change this by issuing a command in game (in chat window). You can use separate targeting mode for main hand WS's vs ranged WS's:
-```
-//wsb tm main
-```
-or
-```
-//wsb tm ranged
-```
+## Usage
 
-### Usage
+### Changing keybinds
 
 You can change the default keybinds by editing the `ws_binds` table in the `keybind_map.lua` file. The syntax is as follows:
 ```
@@ -68,6 +60,17 @@ To use a sub job binding the key must begin with '/'. For example, '/NIN' will a
 
 The 'Default' key is case-sensitive, you must use a capital 'D'. The job and sub job keys are not case sensitive.
 
-### Debugging Tips
+### Changing targeting mode
+
+If you want to use `<stnpc>` targeting instead of the default `<t>` for your weaponskills you can change this by issuing a command in game (in chat window). You can use separate targeting mode for main hand WS's vs ranged WS's:
+```
+//wsb tm main
+```
+or
+```
+//wsb tm ranged
+```
+
+## Debugging Tips
 
 If any of your job luas have a "bind" or an "unbind" command that overlaps with any of the ws keybinds you have defined, you will run into an issue where switching jobs results some of your keybinds not setting properly. It is up to you to ensure there is no overlap in keybinds.

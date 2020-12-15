@@ -86,3 +86,9 @@ or
 ## Debugging Tips
 
 If any of your job luas have a "bind" or an "unbind" command that overlaps with any of the ws keybinds you have defined, you will run into an issue where switching jobs results some of your keybinds not setting properly. It is up to you to ensure there is no overlap in keybinds.
+
+## Known Issues
+
+* Throws errors on login before fully loaded.
+* Throws error when changing jobs or weapons if player has no sub job.
+* Potential overflow error if `frame_count` reaches max int size.

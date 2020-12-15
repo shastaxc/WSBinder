@@ -161,7 +161,11 @@ function update_weaponskill_binds(force_update)
   if ranged_weapon_type ~= nil then
     weapon_type = weapon_type..'/'..ranged_weapon_type
   end
-  local player_job = windower.ffxi.get_player().main_job..'/'..windower.ffxi.get_player().sub_job
+  local player_job = windower.ffxi.get_player().main_job
+  local sub_job = windower.ffxi.get_player().sub_job
+  if sub_job then
+    player_job = player_job..'/'..sub_job
+  end
 
   local notify_msg = 'Set keybinds '
     ..string.char(31,001)..weapon_type
@@ -177,7 +181,10 @@ function get_ws_bindings(weapon_type)
   end
 
   local main_job = windower.ffxi.get_player().main_job:lower()
-  local sub_job = windower.ffxi.get_player().sub_job:lower()
+  local sub_job = windower.ffxi.get_player().sub_job
+  if sub_job then
+    sub_job = sub_job:lower()
+  end
   local weapon_specific_bindings = ws_binds[weapon_type]
 
   -- Separate bindings into job-specific categories
@@ -193,7 +200,7 @@ function get_ws_bindings(weapon_type)
     if key == 'Default' then
       default_bindings = job_specific_table
     -- Get sub job bindings
-    elseif (is_key_sub_job and key:sub(2,string.len(key)):lower() == sub_job:lower()) then
+    elseif (is_key_sub_job and key:sub(2,string.len(key)):lower() == sub_job) then
       sub_job_bindings = job_specific_table
     -- Get main/sub bindings
     elseif (is_key_main_sub_combo and key:sub(1,3):lower() == main_job

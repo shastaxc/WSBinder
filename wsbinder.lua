@@ -95,7 +95,7 @@ function update_weaponskill_binds(force_update)
 
   has_main_weapon_changed = main_weapon_type ~= current_main_weapon_type
   has_ranged_weapon_changed = ranged_weapon_type ~= current_ranged_weapon_type
-  
+
   -- Do not proceed to update keybinds only if all these happen at once:
   -- `force_update` flag isn't set
   -- Main weapon type has not changed, and
@@ -103,7 +103,7 @@ function update_weaponskill_binds(force_update)
   if not force_update and not has_main_weapon_changed and not has_ranged_weapon_changed then
     return
   end
-  
+
   -- Update the main weapon type tracker and get new keybinds
   current_main_weapon_type = main_weapon_type
   -- Get new main hand bindings
@@ -113,7 +113,7 @@ function update_weaponskill_binds(force_update)
   current_ranged_weapon_type = ranged_weapon_type
   -- Get new ranged bindings
   local new_ranged_ws_bindings = get_ws_bindings(ranged_weapon_type)
-  
+
   -- Merge main and ranged keybinds into same table
   local merged_main_ranged_bindings = new_main_ws_bindings
   for keybind,ws_name in pairs(new_ranged_ws_bindings) do
@@ -185,7 +185,7 @@ function get_ws_bindings(weapon_type)
   local main_job_bindings
   local sub_job_bindings
   local main_sub_combo_bindings
-  
+
   for key,job_specific_table in pairs(weapon_specific_bindings) do
     local is_key_sub_job = key:sub(1, 1) == '/'
     local is_key_main_sub_combo = key:sub(4, 4) == '/' and string.len(key) == 7
@@ -228,7 +228,7 @@ function get_ws_bindings(weapon_type)
       merged_bindings[keybind] = ws_name
     end
   end
-  
+
   -- Purge invalid entries
   return purge_invalid_ws_bindings(merged_bindings)
 end
@@ -298,10 +298,10 @@ end
 function check_equipped()
 	local new_gear_table = {}
 	local items_equipped = windower.ffxi.get_items().equipment
-	
+
 	local default_slot = T{'sub','range','ammo','head','body','hands','legs','feet','neck','waist', 'left_ear', 'right_ear', 'left_ring', 'right_ring','back'}
-	default_slot[0]= 'main'	
-	
+	default_slot[0]= 'main'
+
 	if items_equipped then
 		for id,name in pairs(default_slot) do
 			items_equipped[name] = {
@@ -311,7 +311,7 @@ function check_equipped()
       items_equipped[name..'_bag'] = nil
 		end
 	end
-	
+
 	for k,v in pairs(items_equipped) do
 		if v.slot == 0 then
 			new_gear_table[k] = "empty"
@@ -322,7 +322,7 @@ function check_equipped()
 	end
 
 	player.equipment = new_gear_table
-	
+
 	return new_gear_table
 end
 
@@ -370,7 +370,7 @@ windower.register_event('addon command', function(...)
       else
         new_mode = 't'
       end
-      
+
       settings.target_modes[ws_type] = new_mode
       config.save(settings)
       windower.add_to_chat(8, 'WS target mode for '..ws_type..' now set to <'..new_mode..'>.')
@@ -387,7 +387,7 @@ end)
 frame_count = 0
 windower.register_event('prerender',function()
   -- Use frame count to limit execution rate (roughly 0.25-0.5 seconds depending on FPS)
-  if frame_count%15 == 0 and windower.ffxi.get_info().logged_in then
+  if frame_count%15 == 0 and windower.ffxi.get_info().logged_in and windower.ffxi.get_player() then
     check_equipped()
     update_weaponskill_binds()
   end

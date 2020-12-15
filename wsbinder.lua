@@ -37,45 +37,36 @@ res = require 'resources'
 config = require('config')
 require('statics')
 require('keybind_map')
-inspect = require('inspect')
+require('strings')
 
+function initialize()
+  -------------------------------------------------------------------------------
+  -- Define default settings, load user settings
+  -------------------------------------------------------------------------------
+  defaults = {}
+  defaults.target_modes = {}
+  defaults.target_modes.main_hand = 't'
+  defaults.target_modes.ranged = 't'
 
--------------------------------------------------------------------------------
--- Define default settings, load user settings
--------------------------------------------------------------------------------
-defaults = {}
-defaults.target_modes = {}
-defaults.target_modes.main_hand = 't'
-defaults.target_modes.ranged = 't'
+  -- Load settings from file and merge/overwrite defaults
+  settings = config.load(defaults)
 
--- defaults.wstxt = {}
--- defaults.wstxt.pos = {}
--- defaults.wstxt.pos.x = -220
--- defaults.wstxt.pos.y = 45
--- defaults.wstxt.text = {}
--- defaults.wstxt.text.font = 'Arial'
--- defaults.wstxt.text.size = 10
--- defaults.wstxt.flags = {}
--- defaults.wstxt.flags.right = true
-
--- Load settings from file and merge/overwrite defaults
-settings = config.load(defaults)
-
--------------------------------------------------------------------------------
--- Global vars
--------------------------------------------------------------------------------
-current_weapon_type = nil
-current_ranged_weapon_type = nil
-latest_ws_binds = {}
-is_changing_job = nil
-player = {}
-player.equipment = {}
+  -------------------------------------------------------------------------------
+  -- Global vars
+  -------------------------------------------------------------------------------
+  current_weapon_type = nil
+  current_ranged_weapon_type = nil
+  latest_ws_binds = {}
+  is_changing_job = nil
+  player = {}
+  player.equipment = {}
+end
 
 -------------------------------------------------------------------------------
 -- Functions
 -------------------------------------------------------------------------------
 
-function update_weaponskill_binds(has_changed_job)
+function update_weaponskill_binds(force_update)
   if is_changing_job then
     return
   end
@@ -105,11 +96,11 @@ function update_weaponskill_binds(has_changed_job)
   has_main_weapon_changed = main_weapon_type ~= current_main_weapon_type
   has_ranged_weapon_changed = ranged_weapon_type ~= current_ranged_weapon_type
   
-  -- Do not proceed to update keybinds if:
+  -- Do not proceed to update keybinds only if all these happen at once:
+  -- `force_update` flag isn't set
   -- Main weapon type has not changed, and
   -- Ranged weapon type has not changed, and
-  -- Job has not changed
-  if not has_main_weapon_changed and not has_ranged_weapon_changed then
+  if not force_update and not has_main_weapon_changed and not has_ranged_weapon_changed then
     return
   end
   
@@ -166,12 +157,16 @@ function update_weaponskill_binds(has_changed_job)
   latest_ws_binds = merged_main_ranged_bindings
 
   -- Notify user that keybinds have been updated
-  local notify_msg = 'WS Keybinds: '..main_weapon_type
+  local weapon_type = main_weapon_type
   if ranged_weapon_type ~= nil then
-    notify_msg = notify_msg..'/'..ranged_weapon_type..''
+    weapon_type = weapon_type..'/'..ranged_weapon_type
   end
-  notify_msg = notify_msg..' for '..windower.ffxi.get_player().main_job
-    ..'/'..windower.ffxi.get_player().sub_job
+  local player_job = windower.ffxi.get_player().main_job..'/'..windower.ffxi.get_player().sub_job
+
+  local notify_msg = 'Set keybinds '
+    ..string.char(31,001)..weapon_type
+    ..string.char(31,008)..' for '
+    ..string.char(31,001)..player_job
   windower.add_to_chat(8, notify_msg)
 end
 
@@ -335,13 +330,60 @@ end
 -------------------------------------------------------------------------------
 -- Event hooks
 -------------------------------------------------------------------------------
-windower.register_event('logout', function()
-	player = {}
-	player.equipment = {}
+windower.register_event('login', function(name)
+  initialize()
 end)
 
+windower.register_event('load', function()
+  initialize()
+end)
 
--- Executes on every frame. This is just a way to create a perpetual loop.
+windower.register_event('addon command', function(...)
+  local cmdArgs = {...}
+  if cmdArgs[1]:lower() == 'help' or cmdArgs[1]:lower() == 'h' or cmdArgs[1]:lower() == '?' then
+    windower.add_to_chat(8,'WSBinder: Valid commands are //wsb <command>:')
+    windower.add_to_chat(8, 'tm main   | Cycles through valid target modes for main hand.')
+    windower.add_to_chat(8, 'tm ranged | Cycles through valid target modes for ranged.')
+    windower.add_to_chat(8, '')
+    windower.add_to_chat(8, 'To change keybinds, you must directly edit the \'keybind_map.lua\' '..
+     'file. For more information on the keybind mapping, visit https://github.com/shastaxc/WSBinder')
+  elseif cmdArgs[1]:lower() == 'targetmode' or cmdArgs[1]:lower() == 'tm' then
+    local ws_type = cmdArgs[2]:lower()
+    if ws_type == 'main_hand' or ws_type == 'main' or ws_type == 'm' then
+      ws_type = 'main_hand'
+    elseif ws_type == 'ranged' or ws_type == 'range' or ws_type == 'r' then
+      ws_type = 'ranged'
+    else
+      windower.add_to_chat(8, 'Invalid command. Type //wsb help for more info.')
+      ws_type = nil
+    end
+
+    if ws_type then
+      local new_mode
+      if settings.target_modes[ws_type] == 't' then
+        new_mode = 'stnpc'
+      else
+        new_mode = 't'
+      end
+      if settings.target_modes[ws_type] == 't' then
+        new_mode = 'stnpc'
+      else
+        new_mode = 't'
+      end
+      
+      settings.target_modes[ws_type] = new_mode
+      config.save(settings)
+      windower.add_to_chat(8, 'WS target mode for '..ws_type..' now set to <'..new_mode..'>.')
+      update_weaponskill_binds(true)
+    end
+  elseif cmdArgs[1]:lower() == 'reload' or cmdArgs[1]:lower() == 'r' then
+    windower.send_command('lua r wsbinder')
+  else
+    windower.add_to_chat(8, 'Invalid command. Type //wsb help for more info.')
+  end
+end)
+
+-- Executes on every frame. This is a way to create a perpetual loop.
 frame_count = 0
 windower.register_event('prerender',function()
   -- Use frame count to limit execution rate (roughly 0.25-0.5 seconds depending on FPS)

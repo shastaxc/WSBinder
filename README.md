@@ -60,6 +60,9 @@ To use a sub job binding the key must begin with '/'. For example, '/NIN' will a
 
 The 'Default' key is case-sensitive, you must use a capital 'D'. The job and sub job keys are not case sensitive.
 
+**Important if overriding keybinds**
+The keybinds for main hand weapon skills and ranged weapon skills should be mutually exclusive. There should be no overlap between the Archery category + Marksmanship category and any of the others. Archery and Marksmanship can have the same keybinds as each other though.
+
 ### Changing targeting mode
 
 If you want to use `<stnpc>` targeting instead of the default `<t>` for your weaponskills you can change this by issuing a command in game (in chat window). You can use separate targeting mode for main hand WS's vs ranged WS's:

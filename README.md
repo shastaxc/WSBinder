@@ -36,9 +36,9 @@ There are some commands you can use to interact with the WSBinder addon from in-
 
 ### Changing keybinds
 
-You can change the default keybinds by editing `data/settings.xml` file. If you edit the table in `statics.lua`, that will work temporarily but will be reset to default values the next time this addon is updated. The syntax is as follows:
+You can change the default keybinds by editing `data/user-binds.lua` file. If you edit the table in `statics.lua`, that will work temporarily but will be reset to default values the next time this addon is updated. Please just use the `default_ws_binds` table in `statics.lua` as a reference ONLY. The syntax is as follows:
 ```
-ws_binds = {
+user_ws_binds = {
   ['Weapon Category'] = {
     ['Default'] = {
       ['keybind1'] = "WS Name",
@@ -53,25 +53,32 @@ ws_binds = {
   },
 }
 ```
+| Key/Value         | Description                |
+| ----------------- | -------------------------- |
+| `Weapon Category` | This must be a weapon type such as `Dagger`, `Hand-to-Hand`, etc. **This is case sensitive.** |
+| `Default`         | There should always be a `Default` table for each weapon type. Keybinds in this table are applied for all jobs. |
+| `JOB` | This value should be an actual job 3-character abbreviation such as `MNK`, `RNG`, etc. These keybinds only apply if the specified job is set as your main job |
+| `JOB/SUB`         | Same as `JOB` except the keybinds in this table only apply if both your main job and subjob match the table's key. |
+| `keybind`         | Each keybind may be either a single key or a modifier+key. For a list of valid modifiers and keys see the `statics.lua` file for `valid_keybind_modifiers` and `valid_keybinds` |
+| `WS Name`         | Must be a valid WS name. **This is case sensitive.** |
 
 The weapon category's bindings will be merged in the following order: Default -> Main Job -> Main/Sub Combo.
 The player's current main job and sub job are used for matching, and non-matching job definitions will be ignored. The `Default`
-bindings will apply for all jobs.
+bindings will apply for all jobs. In other words, the most specific definitions will override the others. A Main/Sub combo is obviously the most specific.
 
-In other words, the most specific definitions will override the others. A Main/Sub combo is obviously the most specific.
+The order in which they are defined in your table does not matter. Overrides will always go in the order described above.
 
-The order in which they are defined in your table does not matter. Overwrites will always go in the order described above.
+You may use as many keybinds per category as you like. The default categories only include 9 keybinds per weapon type in order to fit on the numpad, but you may have more than that.
 
-To use a sub job binding the key must begin with '/'. For example, '/NIN' will apply those bindings if your sub job is Ninja.
+Modifiers (such as ALT and CTRL) are also optional, but if you use one, you must put a `+` in between it and the key when you specify the keybind.
 
-The 'Default' key is case-sensitive, you must use a capital 'D'. The job and sub job keys are not case sensitive.
-
-**Important if overriding keybinds**
-The keybinds for main hand weapon skills and ranged weapon skills should be mutually exclusive. There should be no overlap between the Archery category + Marksmanship category and any of the others. Archery and Marksmanship can have the same keybinds as each other though.
+**Important if customizing keybinds**
+The keybinds for main hand weapon skills and ranged weapon skills should be mutually exclusive. There should be no overlap between the Archery or Marksmanship category and any of the others. Archery and Marksmanship can have the same keybinds as each other though. The reason for this is so that you can use main weapon WS keybinds and ranged WS keybinds at the same time.
 
 ### Changing targeting mode
 
-If you want to use `<stnpc>` targeting instead of the default `<t>` for your weaponskills you can change this by issuing a command in game (in chat window). You can use separate targeting mode for main hand WS's vs ranged WS's:
+If you want to use `<stnpc>` targeting instead of the default `<t>` for your weaponskills you can change this in one of two ways:
+1. Issue a command in game (in chat window). You can use separate targeting mode for main hand WS's vs ranged WS's:
 ```
 //wsb tm main
 ```
@@ -79,6 +86,7 @@ or
 ```
 //wsb tm ranged
 ```
+2. Change the values in the `data/settings.xml` file.
 
 ## Debugging Tips
 

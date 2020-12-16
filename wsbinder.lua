@@ -27,8 +27,7 @@
 _addon.name = 'WSBinder'
 _addon.author = 'Silvermutt (Asura)'
 _addon.version = '1.0'
-_addon.commands = {'wsbinder', 'wsb', 'weaponskillbinder',}
-
+_addon.commands = {'wsbinder', 'wsb'}
 
 -------------------------------------------------------------------------------
 -- Imports
@@ -37,6 +36,14 @@ res = require 'resources'
 config = require('config')
 require('statics')
 require('strings')
+files = require('files')
+
+-- Create user binds file if it doesn't already exist, and load with init data
+if not files.exists('data/user-binds.lua') then
+  new_file = files.new('data/user-binds.lua', true)
+  files.write(new_file, 'user_ws_binds = {}', true)
+end
+require('data/user-binds')
 
 function initialize()
   -------------------------------------------------------------------------------
@@ -46,10 +53,10 @@ function initialize()
   defaults.target_modes = {}
   defaults.target_modes.main_hand = 't'
   defaults.target_modes.ranged = 't'
-  defaults.ws_binds = default_ws_binds
 
   -- Load settings from file and merge/overwrite defaults
   settings = config.load(defaults)
+  settings.ws_binds = mix_in_user_binds(default_ws_binds, user_ws_binds)
 
   -------------------------------------------------------------------------------
   -- Global vars
@@ -66,6 +73,17 @@ end
 -------------------------------------------------------------------------------
 -- Functions
 -------------------------------------------------------------------------------
+
+-- Overwrites first table with values in second table
+function mix_in_user_binds(d_ws_binds, u_ws_binds)
+  local merged_binds = d_ws_binds
+  for weapon_type,weapon_table in pairs(merged_binds) do
+    if u_ws_binds[weapon_type] then
+      merged_binds[weapon_type] = u_ws_binds[weapon_type]
+    end
+  end
+  return merged_binds
+end
 
 function update_weaponskill_binds(force_update)
   if is_changing_job then
@@ -175,6 +193,10 @@ function update_weaponskill_binds(force_update)
   windower.add_to_chat(8, notify_msg)
 end
 
+-- Keys are not guaranteed to be sorted in any particular order, but keybinds must be overwritten
+-- in a particular order: Default -> Main job only -> Main/Sub job combo
+-- So they need to be pulled out by category, ignoring job bindings that don't match player's current job
+-- then recombined in the right order so overwriting keybinds is done as intended.
 function get_ws_bindings(weapon_type)
   -- Null check
   if settings.ws_binds == nil or weapon_type == nil then
@@ -183,7 +205,7 @@ function get_ws_bindings(weapon_type)
 
   local player_main_job = windower.ffxi.get_player().main_job
   local player_sub_job = windower.ffxi.get_player().sub_job
-  local weapon_specific_bindings = settings.ws_binds[weapon_type:gsub(' ', '_')]
+  local weapon_specific_bindings = settings.ws_binds[weapon_type]
 
   -- Separate bindings into job-specific categories
   local default_bindings
@@ -192,36 +214,40 @@ function get_ws_bindings(weapon_type)
 
   for key,job_specific_table in pairs(weapon_specific_bindings) do
     key_upper = key:upper()
-    local is_key_main_sub_combo = key_upper:at(4) == '/' and string.len(key_upper) == 7
-    local key_main_job = key_upper:sub(1,3)
-    local key_sub_job
-    if is_key_main_sub_combo then
-      local key_sub_job = key_upper:sub(5,7)
-    end
-    -- Ensure main job is valid
-    if key_main_job then
-      if not res.jobs:with('ens', key_main_job) then
-        print("Invalid job key in "..weapon_type.." table: "..key)
-        key_main_job = nil -- Nullify value to avoid binding
-      end
-    end
-    -- Ensure sub job is valid (if specified)
-    if is_key_main_sub_combo then
-      if not res.jobs:with('ens', key_sub_job) then
-        print("Invalid job key in "..weapon_type.." table: "..key)
-        key_sub_job = nil -- Nullify value to avoid binding
-      end
-    end
-    -- Get default bindings
-    if key == 'Default' then
+    local is_key_default = key_upper == 'DEFAULT'
+    if is_key_default then
+      -- Add to default category
       default_bindings = job_specific_table
-    -- Get main/sub bindings
-    elseif (is_key_main_sub_combo and key_main_job == player_main_job
-        and key_sub_job == player_sub_job) then
-      main_sub_combo_bindings = job_specific_table
-    -- Get main job bindings
-    elseif (not is_key_main_sub_combo and key_main_job == player_main_job) then
-      main_job_bindings = job_specific_table
+    else -- Handle job-specific categories
+      local is_key_main_sub_combo = key_upper:length() == 7 and key_upper[4] == '/'
+      local key_main_job = key_upper:sub(1,3)
+      local key_sub_job
+      if is_key_main_sub_combo then
+        local key_sub_job = key_upper:sub(5,7)
+      end
+      -- Ensure main job is valid
+      if key_main_job then
+        if not res.jobs:with('ens', key_main_job) then
+          print("Invalid job key in "..weapon_type.." table: "..key)
+          key_main_job = nil -- Nullify value to avoid binding
+        end
+      end
+      -- Ensure sub job is valid (if specified)
+      if is_key_main_sub_combo then
+        if not res.jobs:with('ens', key_sub_job) then
+          print("Invalid job key in "..weapon_type.." table: "..key)
+          key_sub_job = nil -- Nullify value to avoid binding
+        end
+      end
+      
+      -- Get main/sub bindings
+      if (is_key_main_sub_combo and key_main_job == player_main_job
+          and key_sub_job == player_sub_job) then
+        main_sub_combo_bindings = job_specific_table
+      -- Get main job bindings
+      elseif (not is_key_main_sub_combo and key_main_job == player_main_job) then
+        main_job_bindings = job_specific_table
+      end
     end
   end
   
@@ -249,13 +275,14 @@ function get_ws_bindings(weapon_type)
 end
 
 -- Convert keybinds to computer-readable format & purge invalid entries
--- Convert example: "CTRL_Numpad1" becomes "^numpad1"
--- Purge example: given "CTR_Numpad1" the modifier "CTR" is invalid, entry will be dropped
+-- Convert example: "CTRL+Numpad1" becomes "^numpad1"
+-- Purge example: given "CTR+Numpad1" the modifier "CTR" is invalid, entry will throw error
+-- Blank WS names will not throw an error, but binding will be skipped for that entry
 function clean_ws_binds(ws_bindings)
   local cleaned_table = {}
   for keybind,ws_name in pairs(ws_bindings) do
     -- Check if modifier is included
-    local parsed_keybind = keybind:split('_')
+    local parsed_keybind = keybind:split('+')
     local modifier
     local bind_btn
     if #parsed_keybind == 1 then

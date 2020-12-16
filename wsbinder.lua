@@ -361,7 +361,7 @@ end
 -- Adapted this function from GearInfo
 function check_equipped()
 	local new_gear_table = {}
-	local items_equipped = windower.ffxi.get_items().equipment
+  local items_equipped = windower.ffxi.get_items().equipment
 
 	local default_slot = T{'sub','range','ammo','head','body','hands','legs','feet','neck','waist', 'left_ear', 'right_ear', 'left_ring', 'right_ring','back'}
 	default_slot[0]= 'main'
@@ -381,7 +381,9 @@ function check_equipped()
 			new_gear_table[k] = "empty"
     else
       local item_id = windower.ffxi.get_items(v.bag, v.slot).id
-			new_gear_table[k] = res.items[item_id].en
+      if item_id ~= 0 and item_id ~= nil then
+        new_gear_table[k] = res.items[item_id].en
+      end
 		end
 	end
 
@@ -474,8 +476,3 @@ windower.register_event('outgoing chunk', function(id, data, modified, injected,
   end
 end)
 
-windower.register_event('incoming chunk', function(id,original,modified,injected,blocked)
-  if id == 0x01D then -- Inventory finished loading
-    inventory_loaded = true
-  end
-end)

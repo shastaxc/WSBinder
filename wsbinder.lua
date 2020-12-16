@@ -36,7 +36,6 @@ _addon.commands = {'wsbinder', 'wsb', 'weaponskillbinder',}
 res = require 'resources'
 config = require('config')
 require('statics')
-require('keybind_map')
 require('strings')
 
 function initialize()
@@ -47,6 +46,7 @@ function initialize()
   defaults.target_modes = {}
   defaults.target_modes.main_hand = 't'
   defaults.target_modes.ranged = 't'
+  defaults.ws_binds = default_ws_binds
 
   -- Load settings from file and merge/overwrite defaults
   settings = config.load(defaults)
@@ -60,6 +60,7 @@ function initialize()
   is_changing_job = nil
   player = {}
   player.equipment = {}
+  inventory_loaded = false
 end
 
 -------------------------------------------------------------------------------
@@ -176,117 +177,146 @@ end
 
 function get_ws_bindings(weapon_type)
   -- Null check
-  if ws_binds == nil or weapon_type == nil then
+  if settings.ws_binds == nil or weapon_type == nil then
     return {}
   end
 
-  local main_job = windower.ffxi.get_player().main_job:lower()
-  local sub_job = windower.ffxi.get_player().sub_job
-  if sub_job then
-    sub_job = sub_job:lower()
-  end
-  local weapon_specific_bindings = ws_binds[weapon_type]
+  local player_main_job = windower.ffxi.get_player().main_job
+  local player_sub_job = windower.ffxi.get_player().sub_job
+  local weapon_specific_bindings = settings.ws_binds[weapon_type:gsub(' ', '_')]
 
   -- Separate bindings into job-specific categories
   local default_bindings
   local main_job_bindings
-  local sub_job_bindings
   local main_sub_combo_bindings
 
   for key,job_specific_table in pairs(weapon_specific_bindings) do
-    local is_key_sub_job = key:sub(1, 1) == '/'
-    local is_key_main_sub_combo = key:sub(4, 4) == '/' and string.len(key) == 7
+    key_upper = key:upper()
+    local is_key_main_sub_combo = key_upper:at(4) == '/' and string.len(key_upper) == 7
+    local key_main_job = key_upper:sub(1,3)
+    local key_sub_job
+    if is_key_main_sub_combo then
+      local key_sub_job = key_upper:sub(5,7)
+    end
+    -- Ensure main job is valid
+    if key_main_job then
+      if not res.jobs:with('ens', key_main_job) then
+        print("Invalid job key in "..weapon_type.." table: "..key)
+        key_main_job = nil -- Nullify value to avoid binding
+      end
+    end
+    -- Ensure sub job is valid (if specified)
+    if is_key_main_sub_combo then
+      if not res.jobs:with('ens', key_sub_job) then
+        print("Invalid job key in "..weapon_type.." table: "..key)
+        key_sub_job = nil -- Nullify value to avoid binding
+      end
+    end
     -- Get default bindings
     if key == 'Default' then
       default_bindings = job_specific_table
-    -- Get sub job bindings
-    elseif (is_key_sub_job and key:sub(2,string.len(key)):lower() == sub_job) then
-      sub_job_bindings = job_specific_table
     -- Get main/sub bindings
-    elseif (is_key_main_sub_combo and key:sub(1,3):lower() == main_job
-        and key:sub(5,7):lower() == sub_job:lower()) then
+    elseif (is_key_main_sub_combo and key_main_job == player_main_job
+        and key_sub_job == player_sub_job) then
       main_sub_combo_bindings = job_specific_table
     -- Get main job bindings
-    elseif (not is_key_sub_job and not is_key_main_sub_combo and key:lower() == main_job) then
+    elseif (not is_key_main_sub_combo and key_main_job == player_main_job) then
       main_job_bindings = job_specific_table
     end
   end
-
+  
   -- Combine default, main job, and sub job bindings in that
   -- order to give priority to sub job bindings
-  local merged_bindings = {}
+  local job_merged_bindings = {}
   if default_bindings then
     for keybind,ws_name in pairs(default_bindings) do
-      merged_bindings[keybind] = ws_name
+      job_merged_bindings[keybind] = ws_name
     end
   end
   if main_job_bindings then
     for keybind,ws_name in pairs(main_job_bindings) do
-      merged_bindings[keybind] = ws_name
-    end
-  end
-  if sub_job_bindings then
-    for keybind,ws_name in pairs(sub_job_bindings) do
-      merged_bindings[keybind] = ws_name
+      job_merged_bindings[keybind] = ws_name
     end
   end
   if main_sub_combo_bindings then
     for keybind,ws_name in pairs(main_sub_combo_bindings) do
-      merged_bindings[keybind] = ws_name
+      job_merged_bindings[keybind] = ws_name
     end
   end
 
-  -- Purge invalid entries
-  return purge_invalid_ws_bindings(merged_bindings)
+  -- Convert keybinds to computer-readable format & purge invalid entries
+  return clean_ws_binds(job_merged_bindings)
 end
 
-function purge_invalid_ws_bindings(ws_bindings)
-  local purged_table = {}
+-- Convert keybinds to computer-readable format & purge invalid entries
+-- Convert example: "CTRL_Numpad1" becomes "^numpad1"
+-- Purge example: given "CTR_Numpad1" the modifier "CTR" is invalid, entry will be dropped
+function clean_ws_binds(ws_bindings)
+  local cleaned_table = {}
   for keybind,ws_name in pairs(ws_bindings) do
-    -- Check if modifier or state is included
-    local first_char = keybind:sub(1,1)
-    local second_char = keybind:sub(2,2)
+    -- Check if modifier is included
+    local parsed_keybind = keybind:split('_')
     local modifier
-    local state
     local bind_btn
-    if valid_keybind_states:contains(first_char) then
-      state = first_char
-      bind_btn = keybind:sub(2,string.len(keybind))
-    elseif valid_keybind_modifiers:contains(first_char) then
-      modifier = first_char
-      if valid_keybind_states:contains(second_char) then
-        state = second_char
-        bind_btn = keybind:sub(3,string.len(keybind))
-      else
-        bind_btn = keybind:sub(2,string.len(keybind))
-      end
-    else
-      bind_btn = keybind
+    if #parsed_keybind == 1 then
+      bind_btn = parsed_keybind:lower()
+    elseif #parsed_keybind == 2 then
+      modifier = parsed_keybind[1]:upper()
+      bind_btn = parsed_keybind[2]:lower()
     end
 
-    local is_keybind_blank = bind_btn == ''
-    local is_keybind_valid = valid_keybinds:contains(bind_btn)
-    local is_ws_name_valid = res.weapon_skills:with('en', ws_name) ~= nil
-
-    -- If keybind is valid and ws name is valid, add to purged table
-    if not is_keybind_blank -- Ensure keybind is not blank
-        and is_keybind_valid -- Ensure keybind is in list of valid keys
-        and is_ws_name_valid then -- Ensure WS name is an actual WS name
-      purged_table[keybind] = ws_name
-    elseif is_keybind_blank then
-      if ws_name ~= '' then
-        print("WS Keybind Error: Keybind is blank for "..ws_name)
+    local final_bind
+    if modifier then
+      if valid_keybind_modifiers[modifier] then
+        final_bind = valid_keybind_modifiers[modifier]
       else
-        print("WS Keybind Error: Keybind is blank")
+        final_bind = ""
+        print("Invalid modifier: "..pretty_bind(keybind, ws_name))
       end
-    elseif not is_keybind_valid then
-      print("WS Keybind Error: \""..keybind.."\" is not a valid keybind")
-    elseif not is_ws_name_valid and ws_name ~= nil and ws_name ~= '' then
-      print("WS Keybind Error: \""..ws_name.."\" is not a valid WS name")
+    end
+    if bind_btn then
+      if valid_keybinds:contains(bind_btn) then
+        final_bind = final_bind..bind_btn
+      else
+        print("Invalid keybind: "..pretty_bind(keybind, ws_name))
+      end
+    else
+      print("Invalid keybind: "..pretty_bind(keybind, ws_name))
+      final_bind = nil
+    end
+
+    -- At this point, final_bind is either in the correct format or nil
+    -- If final_bind is nil, may as well skip the rest of this loop cycle
+    if final_bind then -- Ensure keybind is not blank
+      -- Now validate the WS name
+      local is_ws_name_valid = res.weapon_skills:with('en', ws_name) ~= nil
+
+      -- If keybind is valid and ws name is valid, add to cleaned table
+      if is_ws_name_valid then
+        cleaned_table[final_bind] = ws_name
+      elseif ws_name and ws_name ~= '' then
+        print("Invalid WS Name: "..pretty_bind(keybind, ws_name))
+      end
     end
   end
 
-  return purged_table
+  return cleaned_table
+end
+
+function pretty_bind(keybind, ws_name)
+  local msg = ""
+  if keybind and keybind~='' then
+    msg = msg.."["..keybind.."]"
+  else
+    msg = msg.."[Blank Keybind]"
+  end
+  if ws_name and ws_name ~='' then
+    msg = msg.."["..ws_name.."]"
+  else
+    msg = msg.."[Blank WS Name]"
+  end
+
+  return msg
 end
 
 function unbind_ws(ws_to_unbind)
@@ -406,7 +436,6 @@ end)
 -- Hook into job/subjob change event (happens AFTER job has finished changing)
 windower.register_event('job change', function(main_job_id, main_job_level, sub_job_id, sub_job_level)
   is_changing_job = false -- Disable this flag so keybinds can update again
-
   update_weaponskill_binds(true)
 end)
 
@@ -415,5 +444,11 @@ windower.register_event('outgoing chunk', function(id, data, modified, injected,
   if id == 0x100 then -- Send lockstyle command to server
     is_changing_job = true -- Set this flag to lock keybind updating until job change is complete
     unbind_ws(latest_ws_binds)
+  end
+end)
+
+windower.register_event('incoming chunk', function(id,original,modified,injected,blocked)
+  if id == 0x01D then -- Inventory finished loading
+    inventory_loaded = true
   end
 end)

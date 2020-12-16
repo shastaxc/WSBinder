@@ -5,9 +5,7 @@ FFXI Windower v4 addon that dynamically binds weapon skills based on currently-e
 
 Provides weaponskill keybinds that change dynamically based on your current weapon. This function has the
 following benefits:
-- Easily use multiple weapons on one job. For example, having a dagger equipped will allow you to
-use 9 buttons for dagger weaponskills, and then changing your weapon to a sword will automatically unbind those
-dagger WS keybinds and then set your sword keybinds.
+- Easily use multiple weapons on one job. For example, having a dagger equipped will automatically bind your pre-defined dagger weaponskills, and then changing your weapon to a sword will automatically unbind those dagger WS and set your sword keybinds on the fly.
 - Use common keybinds for a specific weapon regardless of your job (but with the ability to customize it per job).
 - Have all your keybinds defined in one place instead of in each individual job file.
 
@@ -38,7 +36,7 @@ There are some commands you can use to interact with the WSBinder addon from in-
 
 ### Changing keybinds
 
-You can change the default keybinds by editing the `ws_binds` table in the `keybind_map.lua` file. The syntax is as follows:
+You can change the default keybinds by editing `data/settings.xml` file. If you edit the table in `statics.lua`, that will work temporarily but will be reset to default values the next time this addon is updated. The syntax is as follows:
 ```
 ws_binds = {
   ['Weapon Category'] = {
@@ -49,9 +47,6 @@ ws_binds = {
     ['JOB'] = {
       ['keybind1'] = "WS3 Name",
     },
-    ['/SUB'] = {
-      ['keybind1'] = "WS4 Name",
-    },
     ['JOB/SUB'] = {
       ['keybind1'] = "WS4 Name",
     },
@@ -59,11 +54,11 @@ ws_binds = {
 }
 ```
 
-The category's bindings will be merged in the following order: Default -> Main Job -> Sub Job -> Main Job/Sub Job Combo.
-The player's current main job and sub job are used for matching and non-matching job definitions will be ignored. Default
+The weapon category's bindings will be merged in the following order: Default -> Main Job -> Main/Sub Combo.
+The player's current main job and sub job are used for matching, and non-matching job definitions will be ignored. The `Default`
 bindings will apply for all jobs.
 
-In other words, the most specific definitions will overwrite all the others. A Job/Sub combo is obviously the most specific.
+In other words, the most specific definitions will override the others. A Main/Sub combo is obviously the most specific.
 
 The order in which they are defined in your table does not matter. Overwrites will always go in the order described above.
 
@@ -92,5 +87,3 @@ If any of your job luas have a "bind" or an "unbind" command that overlaps with 
 ## Known Issues
 
 * Throws errors on login before fully loaded.
-* Throws error when changing jobs or weapons if player has no sub job.
-* Potential overflow error if `frame_count` reaches max int size.

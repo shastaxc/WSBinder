@@ -8,6 +8,8 @@ following benefits:
 - Easily use multiple weapons on one job. For example, having a dagger equipped will automatically bind your pre-defined dagger weaponskills, and then changing your weapon to a sword will automatically unbind those dagger WS and set your sword keybinds on the fly.
 - Use common keybinds for a specific weapon regardless of your job (but with the ability to customize it per job).
 - Have all your keybinds defined in one place instead of in each individual job file.
+- No other addons required
+- Turn on or off an overlay that tells you your current WS keybinds
 
 Override functionality is included so that you can define your own keybinds in a global file without having
 to modify this library lua.
@@ -26,12 +28,14 @@ lua load WSBinder
 ### Addon Commands
 
 There are some commands you can use to interact with the WSBinder addon from in-game chat. Commands follow the format of `//wsb <commands>` (without brackets <>). The following are valid commands:
-| Command           | Alt Cmd     | Description                                                              |
-| ----------------- | ----------- | ------------------------------------------------------------------------ |
-| `help`            | `h`         | Prints out a bunch of helpful messages in the chat log                   |
-| `targetmode main` | `tm m`      | Toggles the target mode for main hand WS's between `<t>` and `<stnpc>`   |
-| `targetmode main` | `tm m`      | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
-| `reload`          | `r`         | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
+| Command           | Alt Cmd       | Description                                                              |
+| ----------------- | ------------- | ------------------------------------------------------------------------ |
+| `help`            | `h`           | Prints out a bunch of helpful messages in the chat log                   |
+| `reload`          | `r`           | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
+| `debug`           | `d`           | Toggles debug messages (e.g. when changing weapons or jobs)              |
+| `visible`         | `show`/`hide` | Toggles visibility on the overlay that shows your current keybinds       |
+| `targetmode main` | `tm m`        | Toggles the target mode for main hand WS's between `<t>` and `<stnpc>`   |
+| `targetmode main` | `tm m`        | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
 
 
 ### Changing keybinds

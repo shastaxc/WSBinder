@@ -37,6 +37,8 @@ config = require('config')
 require('statics')
 require('strings')
 files = require('files')
+texts = require('texts')
+inspect = require('inspect')
 
 -- Create user binds file if it doesn't already exist, and load with init data
 if not files.exists('data/user-binds.lua') then
@@ -53,17 +55,32 @@ function initialize()
   defaults.target_modes = {}
   defaults.target_modes.main_hand = 't'
   defaults.target_modes.ranged = 't'
-
+  
+  defaults.wstxt = {}
+  defaults.wstxt.pos = {}
+  defaults.wstxt.pos.x = -2
+  defaults.wstxt.pos.y = 48
+  defaults.wstxt.text = {}
+  defaults.wstxt.text.font = 'Arial'
+  defaults.wstxt.text.size = 10
+  defaults.wstxt.flags = {}
+  defaults.wstxt.flags.right = true
+  
+  defaults.show_overlay = true
+  defaults.show_debug_messages = false
+  
   -- Load settings from file and merge/overwrite defaults
   settings = config.load(defaults)
-  settings.ws_binds = mix_in_user_binds(default_ws_binds, user_ws_binds)
+  ws_binds = mix_in_user_binds(default_ws_binds, user_ws_binds)
+  ws_overlay = texts.new('${value}', settings.wstxt)
 
   -------------------------------------------------------------------------------
   -- Global vars
   -------------------------------------------------------------------------------
   current_weapon_type = nil
   current_ranged_weapon_type = nil
-  latest_ws_binds = {}
+  latest_ws_binds = {} -- format: { [keybind"] = "ws name" }
+  latest_ws_binds_pretty = {} -- format: { [1] = { weapon_typ ="weapon type", modifier="mod", key="key", ws_name="ws name" }}
   is_changing_job = nil
   player = {}
   player.equipment = {}
@@ -73,6 +90,93 @@ end
 -------------------------------------------------------------------------------
 -- Functions
 -------------------------------------------------------------------------------
+function pretty_sort()
+  table.sort(latest_ws_binds_pretty, function(a, b)
+    if a.weapon_type > b.weapon_type then
+      return true
+    elseif a.weapon_type < b.weapon_type then
+      return false
+    else
+      -- Ensure modifier exists
+      if a.modifier and not b.modifier then
+        return true
+      elseif not a.modifier and b.modifier then
+        return false
+      elseif not a.modifier and not b.modifier then
+        return true
+      end
+      -- At this point, modifier must exist
+      if a.modifier > b.modifier then
+        return true
+      elseif a.modifier < b.modifier then
+        return false
+      else
+        if a.key > b.key then
+          return true
+        elseif a.key < b.key then
+          return false
+        else
+          if a.ws_name > b.ws_name then
+            return true
+          elseif a.ws_name < b.ws_name then
+            return false
+          end
+        end
+      end
+    end
+    return false
+  end)
+end
+
+function chat_msg(color, msg, is_debug)
+  if is_debug and settings.show_debug_messages then
+    windower.add_to_chat(color, msg)
+  elseif not is_debug then
+    windower.add_to_chat(color, msg)
+  end
+end
+
+function display_overlay()
+  local t = windower.ffxi.get_mob_by_target('t') or windower.ffxi.get_mob_by_target('st')
+  local s = windower.ffxi.get_mob_by_target('me')
+  local list = 'Weapon Skills:\n'
+
+  for n,ws_data in pairs(latest_ws_binds_pretty) do
+    local ws = res.weapon_skills:with('en', ws_data.ws_name)
+    local is_out_of_range = isOutOfRange(ws.range, s, t)
+
+    -- Add to display list
+    local mod_msg
+    if ws_data.modifier then
+      mod_msg = ws_data.modifier.."+"
+    else
+      mod_msg = ""
+    end
+    local key_msg = ws_data.key.." "
+    local ws_name_msg = ws_data.ws_name
+    if t and t.distance:sqrt() ~= 0 and not is_out_of_range then 
+      list = list..'\\cs(0,255,0)'..mod_msg..key_msg..ws_name_msg..'\\cs(255,255,255)'..'\n'
+    else
+      list = list..'\\cs(255,255,255)'..mod_msg..key_msg..ws_name_msg..'\n'
+    end
+  end
+  ws_overlay.value = list
+  ws_overlay:visible(settings.show_overlay)
+end
+
+-- 'ws_range' expected to be the range pulled from weapon_skills.lua
+-- 's' is self player object
+-- 't' is target object
+function isOutOfRange(ws_range, s, t)
+  if ws_range == nil or s == nil or t == nil then
+    return true
+  end
+
+  local distance = t.distance:sqrt()
+  local is_out_of_range = distance > (t.model_size + ws_range * range_mult[ws_range] + s.model_size)
+
+  return is_out_of_range
+end
 
 -- Overwrites first table with values in second table
 function mix_in_user_binds(d_ws_binds, u_ws_binds)
@@ -174,6 +278,27 @@ function update_weaponskill_binds(force_update)
   end
 
   latest_ws_binds = merged_main_ranged_bindings
+    
+  -- Make a separate table with good format for displaying in overlay
+  latest_ws_binds_pretty = {}
+  for keybind,ws_name in pairs(merged_main_ranged_bindings) do
+    local entry = {}
+    entry.ws_name = ws_name
+    if new_ranged_ws_bindings[keybind] then
+      entry.weapon_type = ranged_weapon_type
+    else
+      entry.weapon_type = main_weapon_type
+    end
+    entry.modifier = inverted_valid_keybind_modifiers[keybind:sub(1,1)]
+    if entry.modifier then
+      entry.key = keybind:slice(2)
+    else
+      entry.key = keybind
+    end
+    table.insert(latest_ws_binds_pretty, entry)
+  end
+
+  pretty_sort() -- Sorts the latest_ws_binds_pretty table
 
   -- Notify user that keybinds have been updated
   local weapon_type = main_weapon_type
@@ -190,7 +315,7 @@ function update_weaponskill_binds(force_update)
     ..string.char(31,001)..weapon_type
     ..string.char(31,008)..' for '
     ..string.char(31,001)..player_job
-  windower.add_to_chat(8, notify_msg)
+    chat_msg(8, notify_msg, true)
 end
 
 -- Keys are not guaranteed to be sorted in any particular order, but keybinds must be overwritten
@@ -199,13 +324,13 @@ end
 -- then recombined in the right order so overwriting keybinds is done as intended.
 function get_ws_bindings(weapon_type)
   -- Null check
-  if settings.ws_binds == nil or weapon_type == nil then
+  if ws_binds == nil or weapon_type == nil then
     return {}
   end
 
   local player_main_job = windower.ffxi.get_player().main_job
   local player_sub_job = windower.ffxi.get_player().sub_job
-  local weapon_specific_bindings = settings.ws_binds[weapon_type]
+  local weapon_specific_bindings = ws_binds[weapon_type]
 
   -- Separate bindings into job-specific categories
   local default_bindings
@@ -286,18 +411,17 @@ function clean_ws_binds(ws_bindings)
     local modifier
     local bind_btn
     if #parsed_keybind == 1 then
-      bind_btn = parsed_keybind:lower()
+      bind_btn = parsed_keybind[1]:lower()
     elseif #parsed_keybind == 2 then
       modifier = parsed_keybind[1]:upper()
       bind_btn = parsed_keybind[2]:lower()
     end
 
-    local final_bind
+    local final_bind = ""
     if modifier then
       if valid_keybind_modifiers[modifier] then
         final_bind = valid_keybind_modifiers[modifier]
       else
-        final_bind = ""
         print("Invalid modifier: "..pretty_bind(keybind, ws_name))
       end
     end
@@ -398,21 +522,23 @@ end
 -------------------------------------------------------------------------------
 windower.register_event('login', function(name)
   initialize()
+  display_overlay()
 end)
 
 windower.register_event('load', function()
   initialize()
+  display_overlay()
 end)
 
 windower.register_event('addon command', function(...)
   local cmdArgs = {...}
   if cmdArgs[1]:lower() == 'help' or cmdArgs[1]:lower() == 'h' or cmdArgs[1]:lower() == '?' then
-    windower.add_to_chat(8,'WSBinder: Valid commands are //wsb <command>:')
-    windower.add_to_chat(8, 'tm main   | Cycles through valid target modes for main hand.')
-    windower.add_to_chat(8, 'tm ranged | Cycles through valid target modes for ranged.')
-    windower.add_to_chat(8, '')
-    windower.add_to_chat(8, 'To change keybinds, you must directly edit the \'keybind_map.lua\' '..
-     'file. For more information on the keybind mapping, visit https://github.com/shastaxc/WSBinder')
+    chat_msg(8,'WSBinder: Valid commands are //wsb <command>:', false)
+    chat_msg(8, 'tm main   | Cycles through valid target modes for main hand.', false)
+    chat_msg(8, 'tm ranged | Cycles through valid target modes for ranged.', false)
+    chat_msg(8, '', false)
+    chat_msg(8, 'To change keybinds, you must directly edit the \'keybind_map.lua\' '..
+     'file. For more information on the keybind mapping, visit https://github.com/shastaxc/WSBinder', false)
   elseif cmdArgs[1]:lower() == 'targetmode' or cmdArgs[1]:lower() == 'tm' then
     local ws_type = cmdArgs[2]:lower()
     if ws_type == 'main_hand' or ws_type == 'main' or ws_type == 'm' then
@@ -420,7 +546,7 @@ windower.register_event('addon command', function(...)
     elseif ws_type == 'ranged' or ws_type == 'range' or ws_type == 'r' then
       ws_type = 'ranged'
     else
-      windower.add_to_chat(8, 'Invalid command. Type //wsb help for more info.')
+      chat_msg(8, 'Invalid command. Type //wsb help for more info.', false)
       ws_type = nil
     end
 
@@ -439,13 +565,22 @@ windower.register_event('addon command', function(...)
 
       settings.target_modes[ws_type] = new_mode
       config.save(settings)
-      windower.add_to_chat(8, 'WS target mode for '..ws_type..' now set to <'..new_mode..'>.')
+      chat_msg(8, 'WS target mode for '..ws_type..' now set to <'..new_mode..'>.', false)
       update_weaponskill_binds(true)
     end
+  elseif cmdArgs[1]:lower() == 'list' or cmdArgs[1]:lower() == 'visible'
+      or cmdArgs[1]:lower() == 'show' or cmdArgs[1]:lower() == 'hide' then
+    -- Toggle
+    settings.show_overlay = not settings.show_overlay
+    display_overlay()
+    config.save(settings)
+  elseif cmdArgs[1]:lower() == 'debug' or cmdArgs[1]:lower() == 'd' then
+    settings.show_debug_messages = not settings.show_debug_messages
+    config.save(settings)
   elseif cmdArgs[1]:lower() == 'reload' or cmdArgs[1]:lower() == 'r' then
     windower.send_command('lua r wsbinder')
   else
-    windower.add_to_chat(8, 'Invalid command. Type //wsb help for more info.')
+    chat_msg(8, 'Invalid command. Type //wsb help for more info.', false)
   end
 end)
 
@@ -456,6 +591,7 @@ windower.register_event('prerender',function()
   if frame_count%15 == 0 and windower.ffxi.get_info().logged_in and windower.ffxi.get_player() then
     check_equipped()
     update_weaponskill_binds()
+    display_overlay()
     frame_count = 0
   else
     frame_count = frame_count + 1

@@ -427,3 +427,11 @@ range_mult = {
   [11] = 1.454545454545455,
   [12] = 1.666666666666667,
 }
+
+inverted_valid_keybind_modifiers = {
+  ["^"]  = "CTRL", 	-- Ctrl
+  ["!"]   = "ALT", 	-- Alt
+  ["@"]   = "WIN", 	-- Win
+  ["#"]  = "APPS", 	-- Apps
+  ["~"] = "SHIFT", 	-- Shift
+}

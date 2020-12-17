@@ -407,20 +407,37 @@ function clean_ws_binds(ws_bindings)
   local cleaned_table = {}
   for keybind,ws_name in pairs(ws_bindings) do
     -- Check if modifier is included
-    local parsed_keybind = keybind:split('+')
+    -- Modifier could be in two formats, so check both
+    local char_mod = inverted_valid_keybind_modifiers[keybind:sub(1,1)]
     local modifier
     local bind_btn
-    if #parsed_keybind == 1 then
-      bind_btn = parsed_keybind[1]:lower()
-    elseif #parsed_keybind == 2 then
-      modifier = parsed_keybind[1]:upper()
-      bind_btn = parsed_keybind[2]:lower()
+    local split_keybind = keybind:split('+')
+
+    if char_mod then
+      if split_keybind[1]:length() == 1 then
+        -- Keybind is literally just a modifier, invalid
+        print("Invalid modifier: "..pretty_bind(keybind, ws_name))
+      else
+        modifier = char_mod
+        bind_btn = split_keybind[1]:slice(2):lower()
+      end
+    else
+      if #split_keybind == 1 then -- No modifier
+        bind_btn = split_keybind[1]:lower()
+      elseif #split_keybind == 2 then
+        modifier = split_keybind[1]:upper()
+        bind_btn = split_keybind[2]:lower()
+      end
     end
 
     local final_bind = ""
     if modifier then
       if valid_keybind_modifiers[modifier] then
+        -- Modifier is valid, but change its format
         final_bind = valid_keybind_modifiers[modifier]
+      elseif char_mod then
+        -- Modifier is valid
+        final_bind = char_mod
       else
         print("Invalid modifier: "..pretty_bind(keybind, ws_name))
       end
@@ -526,12 +543,18 @@ windower.register_event('login', function(name)
 end)
 
 windower.register_event('logout', function()
+  unbind_ws(latest_ws_binds)
   ws_overlay:visible(false)
 end)
 
 windower.register_event('load', function()
   initialize()
   display_overlay()
+end)
+
+windower.register_event('unload', function()
+  unbind_ws(latest_ws_binds)
+  ws_overlay:visible(false)
 end)
 
 windower.register_event('addon command', function(...)

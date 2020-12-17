@@ -41,7 +41,7 @@ There are some commands you can use to interact with the WSBinder addon from in-
 
 ### Changing keybinds
 
-You can change the default keybinds by editing `data/user-binds.lua` file. If you edit the table in `statics.lua`, that will work temporarily but will be reset to default values the next time this addon is updated. Please just use the `default_ws_binds` table in `statics.lua` as a reference ONLY. The syntax is as follows:
+You can change the the keybinds by editing the `user_ws_binds` table in the `data/user-binds.lua` file. If you edit the `default_ws_binds` table in `statics.lua`, that will work temporarily but will be reset to original values the next time this addon is updated. Please only use that one as a reference. The syntax is as follows:
 ```
 user_ws_binds = {
   ['Weapon Category'] = {
@@ -75,7 +75,20 @@ The order in which they are defined in your table does not matter. Overrides wil
 
 You may use as many keybinds per category as you like. The default categories only include 9 keybinds per weapon type in order to fit on the numpad, but you may have more than that.
 
-Modifiers (such as ALT and CTRL) are also optional, but if you use one, you must put a `+` in between it and the key when you specify the keybind.
+Modifiers (such as ALT and CTRL) are optional, but the following are supported:
+
+| Key/Value | AKA                      | Notes                                                        |
+| --------- | ------------------------ |------------------------------------------------------------ |
+| `CTRL`    | Control                  | Must put a `+` between modifier and the key (e.g. `CTRL+F`)  |
+| `ALT`     |                          | Must put a `+` between modifier and the key (e.g. `ALT+F`)   |
+| `WIN`     | Windows key              | Must put a `+` between modifier and the key (e.g. `WIN+F`)   |
+| `APPS`    | Btn left of `right ctrl` | Must put a `+` between modifier and the key (e.g. `APPS+F`)  |
+| `SHIFT`   |                          | Must put a `+` between modifier and the key (e.g. `SHIFT+F`) |
+| `^`       | CTRL                     | Must NOT put a `+` modifier and the key (e.g. `^F`)          |
+| `!`       | ALT                      | Must NOT put a `+` modifier and the key (e.g. `!F`)          |
+| `@`       | WIN                      | Must NOT put a `+` modifier and the key (e.g. `@F`)          |
+| `#`       | APPS                     | Must NOT put a `+` modifier and the key (e.g. `#F`)          |
+| `~`       | SHIFT                    | Must NOT put a `+` modifier and the key (e.g. `~F`)          |
 
 **Important if customizing keybinds**
 The keybinds for main hand weapon skills and ranged weapon skills should be mutually exclusive. There should be no overlap between the Archery or Marksmanship category and any of the others. Archery and Marksmanship can have the same keybinds as each other though. The reason for this is so that you can use main weapon WS keybinds and ranged WS keybinds at the same time.

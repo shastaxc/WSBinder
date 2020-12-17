@@ -1,0 +1,25 @@
+<?xml version="1.1" ?>
+<settings>
+    <global>
+        <show_debug_messages>false</show_debug_messages>
+        <show_overlay>true</show_overlay>
+        <show_range_highlight>true</show_range_highlight>
+        <target_modes>
+            <main_hand>t</main_hand>
+            <ranged>t</ranged>
+        </target_modes>
+        <wstxt>
+            <flags>
+                <right>true</right>
+            </flags>
+            <pos>
+                <x>-150</x>
+                <y>48</y>
+            </pos>
+            <text>
+                <font>Arial</font>
+                <size>10</size>
+            </text>
+        </wstxt>
+    </global>
+</settings>

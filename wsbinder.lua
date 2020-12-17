@@ -38,7 +38,6 @@ require('statics')
 require('strings')
 files = require('files')
 texts = require('texts')
-inspect = require('inspect')
 
 -- Create user binds file if it doesn't already exist, and load with init data
 if not files.exists('data/user-binds.lua') then
@@ -524,6 +523,10 @@ end
 windower.register_event('login', function(name)
   initialize()
   display_overlay()
+end)
+
+windower.register_event('logout', function()
+  ws_overlay:visible(false)
 end)
 
 windower.register_event('load', function()

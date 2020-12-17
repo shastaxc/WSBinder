@@ -564,11 +564,15 @@ windower.register_event('addon command', function(...)
     cmdArgs[i] = arg:lower()
   end
   if cmdArgs[1] == 'help' or cmdArgs[1] == 'h' or cmdArgs[1] == '?' then
-    chat_msg(8,'WSBinder: Valid commands are //wsb <command>:', false)
+    chat_msg(8, 'WSBinder: Valid commands are //wsb <command>:', false)
+    chat_msg(8, 'reload    | Reloads this addon.', false)
+    chat_msg(8, 'debug     | Toggles debug messages on/off.', false)
+    chat_msg(8, 'visible   | Show/hide the overlay that shows your current keybinds.', false)
+    chat_msg(8, 'showrange | Toggles highlighting of the keybinds.', false)
     chat_msg(8, 'tm main   | Cycles through valid target modes for main hand.', false)
     chat_msg(8, 'tm ranged | Cycles through valid target modes for ranged.', false)
     chat_msg(8, '', false)
-    chat_msg(8, 'To change keybinds, you must directly edit the \'keybind_map.lua\' '..
+    chat_msg(8, 'To change keybinds, you must directly edit the \'user-binds.lua\' '..
      'file. For more information on the keybind mapping, visit https://github.com/shastaxc/WSBinder', false)
   elseif cmdArgs[1] == 'reload' or cmdArgs[1] == 'r' then
     windower.send_command('lua r wsbinder')

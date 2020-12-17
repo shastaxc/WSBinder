@@ -58,7 +58,7 @@ function initialize()
   
   defaults.wstxt = {}
   defaults.wstxt.pos = {}
-  defaults.wstxt.pos.x = -2
+  defaults.wstxt.pos.x = -150
   defaults.wstxt.pos.y = 48
   defaults.wstxt.text = {}
   defaults.wstxt.text.font = 'Arial'

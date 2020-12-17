@@ -34,6 +34,7 @@ There are some commands you can use to interact with the WSBinder addon from in-
 | `reload`          | `r`           | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
 | `debug`           | `d`           | Toggles debug messages (e.g. when changing weapons or jobs)              |
 | `visible`         | `show`/`hide` | Toggles visibility on the overlay that shows your current keybinds       |
+| `showrange`       | `showranges`  | Toggles highlighting of the keybinds (will highlight when in range)      |
 | `targetmode main` | `tm m`        | Toggles the target mode for main hand WS's between `<t>` and `<stnpc>`   |
 | `targetmode main` | `tm m`        | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
 

@@ -68,6 +68,7 @@ function initialize()
   
   defaults.show_overlay = true
   defaults.show_debug_messages = false
+  defaults.show_range_highlight = true
   
   -- Load settings from file and merge/overwrite defaults
   settings = config.load(defaults)
@@ -154,7 +155,7 @@ function display_overlay()
     end
     local key_msg = ws_data.key.." "
     local ws_name_msg = ws_data.ws_name
-    if t and t.distance:sqrt() ~= 0 and not is_out_of_range then 
+    if t and t.distance:sqrt() ~= 0 and not is_out_of_range and settings.show_range_highlight then 
       list = list..'\\cs(0,255,0)'..mod_msg..key_msg..ws_name_msg..'\\cs(255,255,255)'..'\n'
     else
       list = list..'\\cs(255,255,255)'..mod_msg..key_msg..ws_name_msg..'\n'
@@ -532,15 +533,21 @@ end)
 
 windower.register_event('addon command', function(...)
   local cmdArgs = {...}
-  if cmdArgs[1]:lower() == 'help' or cmdArgs[1]:lower() == 'h' or cmdArgs[1]:lower() == '?' then
+  -- Force all args to lowercase
+  for i, arg in ipairs(cmdArgs) do
+    cmdArgs[i] = arg:lower()
+  end
+  if cmdArgs[1] == 'help' or cmdArgs[1] == 'h' or cmdArgs[1] == '?' then
     chat_msg(8,'WSBinder: Valid commands are //wsb <command>:', false)
     chat_msg(8, 'tm main   | Cycles through valid target modes for main hand.', false)
     chat_msg(8, 'tm ranged | Cycles through valid target modes for ranged.', false)
     chat_msg(8, '', false)
     chat_msg(8, 'To change keybinds, you must directly edit the \'keybind_map.lua\' '..
      'file. For more information on the keybind mapping, visit https://github.com/shastaxc/WSBinder', false)
-  elseif cmdArgs[1]:lower() == 'targetmode' or cmdArgs[1]:lower() == 'tm' then
-    local ws_type = cmdArgs[2]:lower()
+  elseif cmdArgs[1] == 'reload' or cmdArgs[1] == 'r' then
+    windower.send_command('lua r wsbinder')
+  elseif cmdArgs[1] == 'targetmode' or cmdArgs[1] == 'tm' then
+    local ws_type = cmdArgs[2]
     if ws_type == 'main_hand' or ws_type == 'main' or ws_type == 'm' then
       ws_type = 'main_hand'
     elseif ws_type == 'ranged' or ws_type == 'range' or ws_type == 'r' then
@@ -568,17 +575,18 @@ windower.register_event('addon command', function(...)
       chat_msg(8, 'WS target mode for '..ws_type..' now set to <'..new_mode..'>.', false)
       update_weaponskill_binds(true)
     end
-  elseif cmdArgs[1]:lower() == 'list' or cmdArgs[1]:lower() == 'visible'
-      or cmdArgs[1]:lower() == 'show' or cmdArgs[1]:lower() == 'hide' then
+  elseif cmdArgs[1] == 'list' or cmdArgs[1] == 'visible'
+      or cmdArgs[1] == 'show' or cmdArgs[1] == 'hide' then
     -- Toggle
     settings.show_overlay = not settings.show_overlay
     display_overlay()
     config.save(settings)
-  elseif cmdArgs[1]:lower() == 'debug' or cmdArgs[1]:lower() == 'd' then
+  elseif cmdArgs[1] == 'debug' or cmdArgs[1] == 'd' then
     settings.show_debug_messages = not settings.show_debug_messages
     config.save(settings)
-  elseif cmdArgs[1]:lower() == 'reload' or cmdArgs[1]:lower() == 'r' then
-    windower.send_command('lua r wsbinder')
+  elseif cmdArgs[1] == 'showrange' or cmdArgs[1] == 'showranges' then
+    settings.show_range_highlight = not settings.show_range_highlight
+    config.save(settings)
   else
     chat_msg(8, 'Invalid command. Type //wsb help for more info.', false)
   end

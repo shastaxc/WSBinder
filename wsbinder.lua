@@ -75,7 +75,7 @@ function initialize()
   -- Load binds from file and merge/overwrite defaults
   settings = config.load(defaults)
   ws_overlay = texts.new('${value}', settings.wstxt)
-  
+
   main_binds = mix_in_user_binds(default_main_binds, user_main_binds)
   ranged_binds = mix_in_user_binds(default_ranged_binds, user_ranged_binds)
   ws_binds = main_binds
@@ -148,11 +148,15 @@ function chat_msg(color, msg, is_debug)
 end
 
 function display_overlay()
+  if not settings.show_overlay then
+    return
+  end
   local t = windower.ffxi.get_mob_by_target('t') or windower.ffxi.get_mob_by_target('st')
   local s = windower.ffxi.get_mob_by_target('me')
-  local list = 'Weapon Skills:\n'
+  local display_msg
+  local msg_list = {}
 
-  for n,ws_data in pairs(latest_ws_binds_pretty) do
+  for n,ws_data in ipairs(latest_ws_binds_pretty) do
     local ws = res.weapon_skills:with('en', ws_data.ws_name)
     local is_out_of_range = isOutOfRange(ws.range, s, t)
 
@@ -163,15 +167,44 @@ function display_overlay()
     else
       mod_msg = ""
     end
-    local key_msg = ws_data.key.." "
+    local key_msg = ws_data.key
     local ws_name_msg = ws_data.ws_name
-    if t and t.distance:sqrt() ~= 0 and not is_out_of_range and settings.show_range_highlight then 
-      list = list..'\\cs(0,255,0)'..mod_msg..key_msg..ws_name_msg..'\\cs(255,255,255)'..'\n'
-    else
-      list = list..'\\cs(255,255,255)'..mod_msg..key_msg..ws_name_msg..'\n'
+    local col_spacer
+    msg_list[n] = {mod_msg=mod_msg, key_msg=key_msg, ws_name_msg=ws_name_msg, char_count=nil}
+  end
+
+  -- Find longest message for use in creating spacers
+  local max_char = 0
+  for n,entry in ipairs(msg_list) do
+    local count = entry.mod_msg:length() + entry.key_msg:length()
+    msg_list[n].char_count = count
+    if count > max_char then
+      max_char = count
     end
   end
-  ws_overlay.value = list
+
+  if #msg_list > 0 then
+    display_msg = 'Weapon Skills:\n'
+    for n,entry in ipairs(msg_list) do
+      -- Create spacer
+      local spacer_size = max_char - entry.char_count
+      local spacer_msg = ' '
+      for i=1,spacer_size do
+        spacer_msg = spacer_msg..' '
+      end
+      if t and t.distance:sqrt() ~= 0 and not is_out_of_range and settings.show_range_highlight then 
+        display_msg = display_msg..spacer_msg..'\\cs(0,255,0)'..entry.mod_msg..entry.key_msg..
+            ' '..entry.ws_name_msg..'\\cs(255,255,255)'..'\n'
+      else
+        display_msg = display_msg..spacer_msg..'\\cs(255,255,255)'..entry.mod_msg..entry.key_msg..
+            ' '..entry.ws_name_msg..'\n'
+      end
+    end
+  else
+    display_msg = 'No WS Keybinds'
+  end
+
+  ws_overlay.value = display_msg
   ws_overlay:visible(settings.show_overlay)
 end
 
@@ -423,11 +456,13 @@ function clean_ws_binds(ws_bindings)
     local modifier
     local bind_btn
     local split_keybind = keybind:split('+')
+    local is_keybind_valid = true
 
     if char_mod then
       if split_keybind[1]:length() == 1 then
         -- Keybind is literally just a modifier, invalid
         print("Invalid modifier: "..pretty_bind(keybind, ws_name))
+        is_keybind_valid = false
       else
         modifier = char_mod
         bind_btn = split_keybind[1]:slice(2):lower()
@@ -451,6 +486,7 @@ function clean_ws_binds(ws_bindings)
         final_bind = char_mod
       else
         print("Invalid modifier: "..pretty_bind(keybind, ws_name))
+        is_keybind_valid = false
       end
     end
     if bind_btn then
@@ -458,9 +494,11 @@ function clean_ws_binds(ws_bindings)
         final_bind = final_bind..bind_btn
       else
         print("Invalid keybind: "..pretty_bind(keybind, ws_name))
+        is_keybind_valid = false
       end
     else
       print("Invalid keybind: "..pretty_bind(keybind, ws_name))
+      is_keybind_valid = false
       final_bind = nil
     end
 
@@ -472,7 +510,9 @@ function clean_ws_binds(ws_bindings)
 
       -- If keybind is valid and ws name is valid, add to cleaned table
       if is_ws_name_valid then
-        cleaned_table[final_bind] = ws_name
+        if is_keybind_valid then
+          cleaned_table[final_bind] = ws_name
+        end
       elseif ws_name and ws_name ~= '' then
         print("Invalid WS Name: "..pretty_bind(keybind, ws_name))
       end
@@ -620,7 +660,7 @@ windower.register_event('addon command', function(...)
       or cmdArgs[1] == 'show' or cmdArgs[1] == 'hide' then
     -- Toggle
     settings.show_overlay = not settings.show_overlay
-    display_overlay()
+    ws_overlay:visible(settings.show_overlay)
     config.save(settings)
   elseif cmdArgs[1] == 'debug' or cmdArgs[1] == 'd' then
     settings.show_debug_messages = not settings.show_debug_messages

@@ -38,11 +38,14 @@ require('statics')
 require('strings')
 files = require('files')
 texts = require('texts')
+inspect = require('inspect')
 
 -- Create user binds file if it doesn't already exist, and load with init data
 if not files.exists('data/user-binds.lua') then
   new_file = files.new('data/user-binds.lua', true)
-  files.write(new_file, 'user_ws_binds = {}', true)
+  files.write(new_file, 'user_main_binds = '..inspect(default_main_binds), false)
+  files.append(new_file, ranged_ws_disclaimer, false)
+  files.append(new_file, 'user_ranged_binds = '..inspect(default_ranged_binds), true)
 end
 require('data/user-binds')
 
@@ -60,7 +63,7 @@ function initialize()
   defaults.wstxt.pos.x = -150
   defaults.wstxt.pos.y = 48
   defaults.wstxt.text = {}
-  defaults.wstxt.text.font = 'Arial'
+  defaults.wstxt.text.font = 'Consolas'
   defaults.wstxt.text.size = 10
   defaults.wstxt.flags = {}
   defaults.wstxt.flags.right = true
@@ -69,10 +72,17 @@ function initialize()
   defaults.show_debug_messages = false
   defaults.show_range_highlight = true
   
-  -- Load settings from file and merge/overwrite defaults
+  -- Load binds from file and merge/overwrite defaults
   settings = config.load(defaults)
-  ws_binds = mix_in_user_binds(default_ws_binds, user_ws_binds)
   ws_overlay = texts.new('${value}', settings.wstxt)
+  
+  main_binds = mix_in_user_binds(default_main_binds, user_main_binds)
+  ranged_binds = mix_in_user_binds(default_ranged_binds, user_ranged_binds)
+  ws_binds = main_binds
+  -- Combine main and ranged tables
+  for weapon_type,table in pairs(ranged_binds) do
+    ws_binds[weapon_type] = table
+  end
 
   -------------------------------------------------------------------------------
   -- Global vars
@@ -80,7 +90,7 @@ function initialize()
   current_weapon_type = nil
   current_ranged_weapon_type = nil
   latest_ws_binds = {} -- format: { [keybind"] = "ws name" }
-  latest_ws_binds_pretty = {} -- format: { [1] = { weapon_typ ="weapon type", modifier="mod", key="key", ws_name="ws name" }}
+  latest_ws_binds_pretty = {} -- format: { [1] = { weapon_type ="weapon type", modifier="mod", key="key", ws_name="ws name" }}
   is_changing_job = nil
   player = {}
   player.equipment = {}
@@ -90,6 +100,7 @@ end
 -------------------------------------------------------------------------------
 -- Functions
 -------------------------------------------------------------------------------
+
 function pretty_sort()
   table.sort(latest_ws_binds_pretty, function(a, b)
     if a.weapon_type > b.weapon_type then

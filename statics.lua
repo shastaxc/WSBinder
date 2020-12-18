@@ -24,7 +24,7 @@
 -- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-default_ws_binds = {
+default_main_binds = {
   ['Hand-to-Hand'] = {
     ['Default'] = {
       ['CTRL+numpad7'] = "Victory Smite", --empyrean
@@ -219,12 +219,15 @@ default_ws_binds = {
     ['SCH'] = {
       ['CTRL+numpad8'] = "Omniscience", --mythic
     },
-  },
-  -- =====================================================
-  -- IMPORTANT: Ranged keybinds should be different than
-  -- all of the other WS keybindsALT+ Otherwise, you will
-  -- only get either main WSs or ranged WSs, but not bothALT+
-  -- =====================================================
+  }
+}
+ranged_ws_disclaimer = '\n'..
+  '-- =====================================================\n'..
+  '-- IMPORTANT: Ranged keybinds should be different than\n'..
+  '-- all of the other WS keybinds Otherwise, you will\n'..
+  '-- only get either main WSs or ranged WSs, but not both\n'..
+  '-- =====================================================\n'
+default_ranged_binds = {
   ['Archery'] = {
     ['Default'] = {
       ['ALT+numpad7'] = "Jishnu's Radiance", --empyrean

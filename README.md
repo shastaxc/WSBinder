@@ -41,6 +41,11 @@ There are some commands you can use to interact with the WSBinder addon from in-
 
 ### Changing keybinds
 
+You must load the addon in game at least once for settings files to be created for you, then you can edit them.
+
+**Important if customizing keybinds**
+The keybinds for main hand weapon skills and ranged weapon skills should be mutually exclusive. There should be no overlap between the Archery or Marksmanship category and any of the others. Archery and Marksmanship can have the same keybinds as each other though. The reason for this is so that you can use main weapon WS keybinds and ranged WS keybinds at the same time.
+
 You can change the the keybinds by editing the `user_ws_binds` table in the `data/user-binds.lua` file. If you edit the `default_ws_binds` table in `statics.lua`, that will work temporarily but will be reset to original values the next time this addon is updated. Please only use that one as a reference. The syntax is as follows:
 ```
 user_ws_binds = {
@@ -89,9 +94,6 @@ Modifiers (such as ALT and CTRL) are optional, but the following are supported:
 | `@`       | WIN                      | Must NOT put a `+` modifier and the key (e.g. `@F`)          |
 | `#`       | APPS                     | Must NOT put a `+` modifier and the key (e.g. `#F`)          |
 | `~`       | SHIFT                    | Must NOT put a `+` modifier and the key (e.g. `~F`)          |
-
-**Important if customizing keybinds**
-The keybinds for main hand weapon skills and ranged weapon skills should be mutually exclusive. There should be no overlap between the Archery or Marksmanship category and any of the others. Archery and Marksmanship can have the same keybinds as each other though. The reason for this is so that you can use main weapon WS keybinds and ranged WS keybinds at the same time.
 
 ### Changing targeting mode
 

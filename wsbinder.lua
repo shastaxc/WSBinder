@@ -103,38 +103,24 @@ end
 
 function pretty_sort()
   table.sort(latest_ws_binds_pretty, function(a, b)
-    if a.weapon_type > b.weapon_type then
-      return true
-    elseif a.weapon_type < b.weapon_type then
+    -- Sort keybinds with modifiers after keybinds
+    if a.modifier and not b.modifier then
       return false
-    else
-      -- Ensure modifier exists
-      if a.modifier and not b.modifier then
-        return true
-      elseif not a.modifier and b.modifier then
-        return false
-      elseif not a.modifier and not b.modifier then
-        return true
-      end
-      -- At this point, modifier must exist
-      if a.modifier > b.modifier then
-        return true
-      elseif a.modifier < b.modifier then
-        return false
-      else
-        if a.key > b.key then
-          return true
-        elseif a.key < b.key then
-          return false
-        else
-          if a.ws_name > b.ws_name then
-            return true
-          elseif a.ws_name < b.ws_name then
-            return false
-          end
-        end
+    elseif not a.modifier and b.modifier then
+      return true
+    elseif not a.modifier and not b.modifier then -- Neither have modifiers
+      -- Sort according to order defined in valid_keybinds
+      return keybind_order[a.key] < keybind_order[b.key]
+    else -- Both have modifiers
+      -- Sort according to order defined in valid_modifiers
+      -- If modifiers are the same, sort by key
+      if a.modifier == b.modifier then
+        return keybind_order[a.key] < keybind_order[b.key]
+      else -- Otherwise, sort using the modifier order
+        return keybind_modifier_order[a.modifier] > keybind_modifier_order[b.modifier]
       end
     end
+
     return false
   end)
 end

@@ -369,7 +369,7 @@ function get_ws_bindings(weapon_type)
 
   for key,job_specific_table in pairs(weapon_specific_bindings) do
     key_upper = key:upper()
-    local is_key_default = key_upper == 'DEFAULT'
+    local is_key_default = key_upper == 'ALL'
     if is_key_default then
       -- Add to default category
       default_bindings = job_specific_table

@@ -62,19 +62,22 @@ user_ws_binds = {
     },
   },
 }
+
+Note: Braces and quotes are required around keys that contain a space or special character like `["GEO/WHM"]` (correct) vs `GEO/WHM` (incorrect) or `["Great Sword"]` (correct) vs `Great Sword` (incorrect).
+
 ```
 | Key/Value         | Description                |
 | ----------------- | -------------------------- |
 | `Weapon Category` | This must be a weapon type such as `Dagger`, `Hand-to-Hand`, etc. **This is case sensitive.** |
-| `Default`         | There should always be a `Default` table for each weapon type. Keybinds in this table are applied for all jobs. |
+| `All`             | There should always be an `All` table for each weapon type. Keybinds in this table are applied for all jobs. |
 | `JOB` | This value should be an actual job 3-character abbreviation such as `MNK`, `RNG`, etc. These keybinds only apply if the specified job is set as your main job |
 | `JOB/SUB`         | Same as `JOB` except the keybinds in this table only apply if both your main job and subjob match the table's key. |
 | `keybind`         | Each keybind may be either a single key or a modifier+key. For a list of valid modifiers and keys see the `statics.lua` file for `valid_keybind_modifiers` and `valid_keybinds` |
 | `WS Name`         | Must be a valid WS name. **This is case sensitive.** |
 
-The weapon category's bindings will be merged in the following order: Default -> Main Job -> Main/Sub Combo.
-The player's current main job and sub job are used for matching, and non-matching job definitions will be ignored. The `Default`
-bindings will apply for all jobs. In other words, the most specific definitions will override the others. A Main/Sub combo is obviously the most specific.
+The weapon category's bindings will be merged in the following order: All -> Main Job -> Main/Sub Combo.
+The player's current main job and sub job are used for matching, and non-matching job definitions will be ignored. The `All`
+bindings will apply for all jobs. In other words, the most specific definitions will override the others. A Main/Sub combo is obviously the most specific. If you want to "unset" a binding from the `All` table for a specific job, you can create a keybind in that job's table with the same keybind key but leave the WS blank.
 
 The order in which they are defined in your table does not matter. Overrides will always go in the order described above.
 

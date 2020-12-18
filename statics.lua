@@ -26,7 +26,7 @@
 
 default_main_binds = {
   ['Hand-to-Hand'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Victory Smite", --empyrean
       ['CTRL+numpad8'] = "", --mythic
       ['CTRL+numpad9'] = "Final Heaven", --relic
@@ -45,7 +45,7 @@ default_main_binds = {
     },
   },
   ['Dagger'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Rudra's Storm", --empyrean
       ['CTRL+numpad8'] = "", --mythic
       ['CTRL+numpad9'] = "Mercy Stroke", --relic
@@ -67,7 +67,7 @@ default_main_binds = {
     },
   },
   ['Sword'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Chant du Cygne", --empyrean
       ['CTRL+numpad8'] = "", --mythic
       ['CTRL+numpad9'] = "Knights of Round", --relic
@@ -89,7 +89,7 @@ default_main_binds = {
     },
   },
   ['Great Sword'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Torcleaver", --empyrean
       ['CTRL+numpad8'] = "Dimidiation", --mythic
       ['CTRL+numpad9'] = "Scourge", --relic
@@ -102,7 +102,7 @@ default_main_binds = {
     },
   },
   ['Axe'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Cloudsplitter", --empyrean
       ['CTRL+numpad8'] = "Primal Rend", --mythic
       ['CTRL+numpad9'] = "Onslaught", --relic
@@ -115,7 +115,7 @@ default_main_binds = {
     },
   },
   ['Great Axe'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Ukko's Fury", --empyrean
       ['CTRL+numpad8'] = "King's Justice", --mythic
       ['CTRL+numpad9'] = "Metatron Torment", --relic
@@ -128,7 +128,7 @@ default_main_binds = {
     },
   },
   ['Scythe'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Quietus", --empyrean
       ['CTRL+numpad8'] = "Insurgency", --mythic
       ['CTRL+numpad9'] = "Catastrophe", --relic
@@ -141,7 +141,7 @@ default_main_binds = {
     },
   },
   ['Polearm'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Camlann's Torment", --empyrean
       ['CTRL+numpad8'] = "Drakesbane", --mythic
       ['CTRL+numpad9'] = "Geirskogul", --relic
@@ -154,7 +154,7 @@ default_main_binds = {
     },
   },
   ['Katana'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Blade: Hi", --empyrean
       ['CTRL+numpad8'] = "Blade: Kamu", --mythic
       ['CTRL+numpad9'] = "Blade: Metsu", --relic
@@ -167,7 +167,7 @@ default_main_binds = {
     },
   },
   ['Great Katana'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Tachi: Fudo", --empyrean
       ['CTRL+numpad8'] = "Tachi: Rana", --mythic
       ['CTRL+numpad9'] = "Tachi: Kaiten", --relic
@@ -180,7 +180,7 @@ default_main_binds = {
     },
   },
   ['Club'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Dagan", --empyrean
       ['CTRL+numpad8'] = "", --mythic
       ['CTRL+numpad9'] = "Randgrith", --relic
@@ -199,7 +199,7 @@ default_main_binds = {
     },
   },
   ['Staff'] = {
-    ['Default'] = {
+    ['All'] = {
       ['CTRL+numpad7'] = "Myrkr", --empyrean
       ['CTRL+numpad8'] = "", --mythic
       ['CTRL+numpad9'] = "Gate of Tartarus", --relic
@@ -229,7 +229,7 @@ ranged_ws_disclaimer = '\n'..
   '-- =====================================================\n'
 default_ranged_binds = {
   ['Archery'] = {
-    ['Default'] = {
+    ['All'] = {
       ['ALT+numpad7'] = "Jishnu's Radiance", --empyrean
       ['ALT+numpad8'] = "", --mythic
       ['ALT+numpad9'] = "Namas Arrow", --relic
@@ -249,7 +249,7 @@ default_ranged_binds = {
     },
   },
   ['Marksmanship'] = {
-    ['Default'] = {
+    ['All'] = {
       ['ALT+numpad7'] = "Wildfire", --empyrean
       ['ALT+numpad8'] = "", --mythic
       ['ALT+numpad9'] = "", --relic

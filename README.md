@@ -22,6 +22,8 @@ to modify this library lua.
 ```
 lua load WSBinder
 ```
+4. Remove all conflicting keybinds from your GearSwap job luas.
+5. Load this addon with the command ``lua load WSBinder` so it can generate your user files. This must be done first before you can set your own keybinds.
 
 ## Usage
 

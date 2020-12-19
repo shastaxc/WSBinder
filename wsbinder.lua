@@ -169,8 +169,8 @@ function display_overlay()
 
   for n,ws_data in ipairs(latest_ws_binds_pretty) do
     local ws = res.weapon_skills:with('en', ws_data.ws_name)
-    local is_out_of_range = isOutOfRange(ws.range, s, t)
-
+    local oor = is_out_of_range(ws.range, s, t)
+    
     -- Add to display list
     local mod_msg
     if ws_data.modifier then
@@ -181,7 +181,7 @@ function display_overlay()
     local key_msg = ws_data.key
     local ws_name_msg = ws_data.ws_name
     local col_spacer
-    msg_list[n] = {mod_msg=mod_msg, key_msg=key_msg, ws_name_msg=ws_name_msg, char_count=nil}
+    msg_list[n] = {mod_msg=mod_msg, key_msg=key_msg, ws_name_msg=ws_name_msg, is_oor=oor, char_count=nil}
   end
 
   -- Find longest message for use in creating spacers
@@ -203,7 +203,7 @@ function display_overlay()
       for i=1,spacer_size do
         spacer_msg = spacer_msg..' '
       end
-      if t and t.distance:sqrt() ~= 0 and not is_out_of_range and settings.show_range_highlight then 
+      if t and t.distance:sqrt() ~= 0 and not entry.is_oor and settings.show_range_highlight then 
         display_msg = display_msg..spacer_msg..'\\cs(0,255,0)'..entry.mod_msg..entry.key_msg..
             ' '..entry.ws_name_msg..'\\cs(255,255,255)'..'\n'
       else
@@ -222,15 +222,15 @@ end
 -- 'ws_range' expected to be the range pulled from weapon_skills.lua
 -- 's' is self player object
 -- 't' is target object
-function isOutOfRange(ws_range, s, t)
+function is_out_of_range(ws_range, s, t)
   if ws_range == nil or s == nil or t == nil then
     return true
   end
 
   local distance = t.distance:sqrt()
-  local is_out_of_range = distance > (t.model_size + ws_range * range_mult[ws_range] + s.model_size)
+  local oor = distance > (t.model_size + ws_range * range_mult[ws_range] + s.model_size)
 
-  return is_out_of_range
+  return oor
 end
 
 -- Overwrites first table with values in second table

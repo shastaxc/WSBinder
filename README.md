@@ -28,15 +28,19 @@ lua load WSBinder
 ### Addon Commands
 
 There are some commands you can use to interact with the WSBinder addon from in-game chat. Commands follow the format of `//wsb <commands>` (without brackets <>). The following are valid commands:
-| Command           | Alt Cmd       | Description                                                              |
-| ----------------- | ------------- | ------------------------------------------------------------------------ |
-| `help`            | `h`           | Prints out a bunch of helpful messages in the chat log                   |
-| `reload`          | `r`           | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
-| `debug`           | `d`           | Toggles debug messages (e.g. when changing weapons or jobs)              |
-| `visible`         | `show`/`hide` | Toggles visibility on the overlay that shows your current keybinds       |
-| `showrange`       | `showranges`  | Toggles highlighting of the keybinds (will highlight when in range)      |
-| `targetmode main` | `tm m`        | Toggles the target mode for main hand WS's between `<t>` and `<stnpc>`   |
-| `targetmode main` | `tm m`        | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>` |
+| Command                | Alt Cmd       | Description                                                                      |
+| ---------------------- | ------------- | -------------------------------------------------------------------------------- |
+| `help`                 | `h`           | Prints out a bunch of helpful messages in the chat log                           |
+| `reload`               | `r`           | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>`         |
+| `debug`                | `d`           | Toggles debug messages (e.g. when changing weapons or jobs)                      |
+| `visible`              | `show`/`hide` | Toggles visibility on the overlay that shows your current keybinds               |
+| `showrange`            | `showranges`  | Toggles highlighting of the keybinds (will highlight when in range)              |
+| `targetmode main`      | `tm m`        | Toggles the target mode for main hand WS's between `<t>` and `<stnpc>`           |
+| `targetmode main`      | `tm m`        | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>`         |
+| `exclusivemode on`     | `em on`       | Grants the ability to use exclusive mode.                                        |
+| `exclusivemode off`    | `em off`      | Removes the ability to use exclusive mode.                                       |
+| `exclusivemode main`   | `em main`     | Sets exclusive mode to only bind/display main WS's. (only works if `em` is on)   |
+| `exclusivemode ranged` | `em ranged`   | Sets exclusive mode to only bind/display ranged WS's. (only works if `em` is on) |
 
 
 ### Changing keybinds

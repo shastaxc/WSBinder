@@ -693,12 +693,12 @@ windower.register_event('addon command', function(...)
     settings.show_range_highlight = not settings.show_range_highlight
     config.save(settings)
   elseif cmdArgs[1] == 'exclusivemode' or cmdArgs[1] == 'em' then
-    if cmdArgs[2] == 'disable' then
+    if cmdArgs[2] == 'off' or cmdArgs[2] == 'disable' then
       settings.is_exclusive_enabled = false
       config.save(settings)
       bind_exclusive_mode_toggle(false)
       chat_msg(8, 'Exclusive mode is now disabled.', false)
-    elseif cmdArgs[2] == 'enable' then
+    elseif cmdArgs[2] == 'on' or cmdArgs[2] == 'enable' then
       settings.is_exclusive_enabled = true
       config.save(settings)
       bind_exclusive_mode_toggle(true)

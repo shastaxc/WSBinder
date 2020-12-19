@@ -42,6 +42,8 @@ There are some commands you can use to interact with the WSBinder addon from in-
 | `exclusivemode main`   | `em main`     | Sets exclusive mode to only bind/display main WS's. (only works if `em` is on)   |
 | `exclusivemode ranged` | `em ranged`   | Sets exclusive mode to only bind/display ranged WS's. (only works if `em` is on) |
 
+### Repositioning the UI
+You can move the UI by holding control and clicking/dragging it with your mouse.
 
 ### Changing keybinds
 

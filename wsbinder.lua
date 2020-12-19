@@ -61,13 +61,22 @@ function initialize()
   
   defaults.wstxt = {}
   defaults.wstxt.pos = {}
-  defaults.wstxt.pos.x = -150
+  defaults.wstxt.pos.x = 15
   defaults.wstxt.pos.y = 48
   defaults.wstxt.text = {}
   defaults.wstxt.text.font = 'Consolas'
   defaults.wstxt.text.size = 10
+  defaults.wstxt.text.alpha = 200
+  defaults.wstxt.text.red = 255
+  defaults.wstxt.text.green = 255
+  defaults.wstxt.text.blue = 255
   defaults.wstxt.flags = {}
-  defaults.wstxt.flags.right = true
+  defaults.wstxt.flags.draggable = true
+  defaults.wstxt.bg = {}
+  defaults.wstxt.bg.alpha = 200
+  defaults.wstxt.bg.red = 0
+  defaults.wstxt.bg.green = 0
+  defaults.wstxt.bg.blue = 0
   
   defaults.show_overlay = true
   defaults.show_debug_messages = false
@@ -77,6 +86,9 @@ function initialize()
   -- Load binds from file and merge/overwrite defaults
   settings = config.load(defaults)
   ws_overlay = texts.new('${value}', settings.wstxt)
+  in_range_txt_color = '\\cs('..settings.wstxt.text.alpha..',0,255,0)'
+  normal_txt_color = '\\cs('..settings.wstxt.text.alpha..','..settings.wstxt.text.red..
+      ','..settings.wstxt.text.green..','..settings.wstxt.text.blue..')'
 
   main_binds = mix_in_user_binds(default_main_binds, user_main_binds)
   ranged_binds = mix_in_user_binds(default_ranged_binds, user_ranged_binds)
@@ -204,10 +216,10 @@ function display_overlay()
         spacer_msg = spacer_msg..' '
       end
       if t and t.distance:sqrt() ~= 0 and not entry.is_oor and settings.show_range_highlight then 
-        display_msg = display_msg..spacer_msg..'\\cs(0,255,0)'..entry.mod_msg..entry.key_msg..
-            ' '..entry.ws_name_msg..'\\cs(255,255,255)'..'\n'
+        display_msg = display_msg..spacer_msg..in_range_txt_color..entry.mod_msg..entry.key_msg..
+            ' '..entry.ws_name_msg..normal_txt_color..'\n'
       else
-        display_msg = display_msg..spacer_msg..'\\cs(255,255,255)'..entry.mod_msg..entry.key_msg..
+        display_msg = display_msg..spacer_msg..normal_txt_color..entry.mod_msg..entry.key_msg..
             ' '..entry.ws_name_msg..'\n'
       end
     end
@@ -620,6 +632,7 @@ end)
 windower.register_event('logout', function()
   unbind_ws(latest_ws_binds)
   ws_overlay:visible(false)
+  config.save(settings)
 end)
 
 windower.register_event('load', function()
@@ -630,6 +643,7 @@ end)
 windower.register_event('unload', function()
   unbind_ws(latest_ws_binds)
   ws_overlay:visible(false)
+  config.save(settings)
 end)
 
 windower.register_event('addon command', function(...)
@@ -646,9 +660,14 @@ windower.register_event('addon command', function(...)
     chat_msg(8, 'showrange | Toggles highlighting of the keybinds.', false)
     chat_msg(8, 'tm main   | Cycles through valid target modes for main hand.', false)
     chat_msg(8, 'tm ranged | Cycles through valid target modes for ranged.', false)
+    chat_msg(8, 'em on     | Enables exclusive mode.', false)
+    chat_msg(8, 'em off    | Disables exclusive mode.', false)
+    chat_msg(8, 'em main   | Use main WS only.', false)
+    chat_msg(8, 'em ranged | Use ranged WS only.', false)
     chat_msg(8, '', false)
     chat_msg(8, 'To change keybinds, you must directly edit the \'user-binds.lua\' '..
-     'file. For more information on the keybind mapping, visit https://github.com/shastaxc/WSBinder', false)
+      'file. For more information on the keybind mapping, visit https://github.com/shastaxc/WSBinder', false)
+    chat_msg(8, 'Reposition UI with control+click and drag.', false)
   elseif cmdArgs[1] == 'reload' or cmdArgs[1] == 'r' then
     windower.send_command('lua r wsbinder')
   elseif cmdArgs[1] == 'targetmode' or cmdArgs[1] == 'tm' then

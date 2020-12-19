@@ -225,7 +225,8 @@ ranged_ws_disclaimer = '\n'..
   '-- =====================================================\n'..
   '-- IMPORTANT: Ranged keybinds should be different than\n'..
   '-- all of the other WS keybinds Otherwise, you will\n'..
-  '-- only get either main WSs or ranged WSs, but not both\n'..
+  '-- only get either main WSs or ranged WSs, but not both.'..
+  '-- The only exception is if you enable exclusive mode.\n'..
   '-- =====================================================\n'
 default_ranged_binds = {
   ['Archery'] = {

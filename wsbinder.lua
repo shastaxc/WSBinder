@@ -776,7 +776,7 @@ end)
 
 -- Hook into job/subjob change event (happens BEFORE job starts changing)
 windower.register_event('outgoing chunk', function(id, data, modified, injected, blocked)
-  if id == 0x100 then -- Send lockstyle command to server
+  if id == 0x100 then -- Sending job change command to server
     is_changing_job = true -- Set this flag to lock keybind updating until job change is complete
     unbind_ws(latest_ws_binds)
   end

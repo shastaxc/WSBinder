@@ -43,7 +43,8 @@ inspect = require('inspect')
 -- Create user binds file if it doesn't already exist, and load with init data
 if not files.exists('data/user-binds.lua') then
   new_file = files.new('data/user-binds.lua', true)
-  files.write(new_file, 'user_main_binds = '..inspect(default_main_binds), false)
+  files.write(new_file, 'exclusive_mode_toggle_keybind = "WIN+H"\n', false)
+  files.append(new_file, 'user_main_binds = '..inspect(default_main_binds)..'\n', false)
   files.append(new_file, ranged_ws_disclaimer, false)
   files.append(new_file, 'user_ranged_binds = '..inspect(default_ranged_binds), true)
 end
@@ -71,6 +72,7 @@ function initialize()
   defaults.show_overlay = true
   defaults.show_debug_messages = false
   defaults.show_range_highlight = true
+  defaults.is_exclusive_enabled = false
   
   -- Load binds from file and merge/overwrite defaults
   settings = config.load(defaults)
@@ -84,6 +86,10 @@ function initialize()
     ws_binds[weapon_type] = table
   end
 
+  if settings.is_exclusive_enabled then
+    bind_exclusive_mode_toggle(true)
+  end
+
   -------------------------------------------------------------------------------
   -- Global vars
   -------------------------------------------------------------------------------
@@ -95,11 +101,30 @@ function initialize()
   player = {}
   player.equipment = {}
   inventory_loaded = false
+  exclusive_mode = 'main'
 end
 
 -------------------------------------------------------------------------------
 -- Functions
 -------------------------------------------------------------------------------
+function bind_exclusive_mode_toggle(shall_bind)
+  local temp = clean_keybinds({[exclusive_mode_toggle_keybind] = "Combo"})
+  if shall_bind then
+    windower.send_command('bind '..temp[1]..' wsb exclusivemode toggle')
+  else
+    windower.send_command('unbind '..temp[1])
+  end
+end
+
+function clean_keybinds(table)
+  local ret = {}
+  local count = 1
+  for keybind,w in pairs(clean_ws_binds(table)) do
+    ret[count] = keybind
+    count = count + 1
+  end
+  return ret
+end
 
 function pretty_sort()
   table.sort(latest_ws_binds_pretty, function(a, b)
@@ -249,23 +274,36 @@ function update_weaponskill_binds(force_update)
   has_main_weapon_changed = main_weapon_type ~= current_main_weapon_type
   has_ranged_weapon_changed = ranged_weapon_type ~= current_ranged_weapon_type
 
+  is_updating_main = (has_main_weapon_changed and not settings.is_exclusive_enabled)
+      or (has_main_weapon_changed and settings.is_exclusive_enabled and exclusive_mode == 'main')
+  is_updating_ranged = (has_ranged_weapon_changed and not is_exclusive_enabled)
+      or (has_ranged_weapon_changed and settings.is_exclusive_enabled and exclusive_mode == 'ranged')
+
   -- Do not proceed to update keybinds only if all these happen at once:
   -- `force_update` flag isn't set
-  -- Main weapon type has not changed, and
-  -- Ranged weapon type has not changed, and
-  if not force_update and not has_main_weapon_changed and not has_ranged_weapon_changed then
+  -- Not updating main weapon binds, and
+  -- Not updating ranged weapon binds, and
+  if not force_update
+      and not is_updating_main
+      and not is_updating_ranged then
     return
   end
 
-  -- Update the main weapon type tracker and get new keybinds
-  current_main_weapon_type = main_weapon_type
-  -- Get new main hand bindings
-  local new_main_ws_bindings = get_ws_bindings(main_weapon_type)
+  local new_main_ws_bindings = {}
+  if not settings.is_exclusive_enabled or (settings.is_exclusive_enabled and exclusive_mode == 'main') then
+    -- Update the main weapon type tracker and get new keybinds
+    current_main_weapon_type = main_weapon_type
+    -- Get new main hand bindings
+    new_main_ws_bindings = get_ws_bindings(main_weapon_type)
+  end
 
-  -- Update the ranged weapon type tracker and get new keybinds
-  current_ranged_weapon_type = ranged_weapon_type
-  -- Get new ranged bindings
-  local new_ranged_ws_bindings = get_ws_bindings(ranged_weapon_type)
+  local new_ranged_ws_bindings = {}
+  if not settings.is_exclusive_enabled or (settings.is_exclusive_enabled and exclusive_mode == 'ranged') then
+    -- Update the ranged weapon type tracker and get new keybinds
+    current_ranged_weapon_type = ranged_weapon_type
+    -- Get new ranged bindings
+    new_ranged_ws_bindings = get_ws_bindings(ranged_weapon_type)
+  end
 
   -- Merge main and ranged keybinds into same table
   local merged_main_ranged_bindings = new_main_ws_bindings
@@ -654,6 +692,44 @@ windower.register_event('addon command', function(...)
   elseif cmdArgs[1] == 'showrange' or cmdArgs[1] == 'showranges' then
     settings.show_range_highlight = not settings.show_range_highlight
     config.save(settings)
+  elseif cmdArgs[1] == 'exclusivemode' or cmdArgs[1] == 'em' then
+    if cmdArgs[2] == 'disable' then
+      settings.is_exclusive_enabled = false
+      config.save(settings)
+      bind_exclusive_mode_toggle(false)
+      chat_msg(8, 'Exclusive mode is now disabled.', false)
+    elseif cmdArgs[2] == 'enable' then
+      settings.is_exclusive_enabled = true
+      config.save(settings)
+      bind_exclusive_mode_toggle(true)
+      chat_msg(8, 'Exclusive mode is now enabled.', false)
+    elseif cmdArgs[2] == 'swap' or cmdArgs[2] == 'toggle' then
+      if not settings.is_exclusive_enabled then
+        chat_msg(8, 'Error: Exclusive mode is disabled.', false)
+      else
+        if exclusive_mode == 'main' then
+          exclusive_mode = 'ranged'
+          chat_msg(8, 'Now binding only Ranged WS.', false)
+        else
+          exclusive_mode = 'main'
+          chat_msg(8, 'Now binding only Main WS.', false)
+        end
+      end
+    elseif cmdArgs[2] == 'main' then
+      if not settings.is_exclusive_enabled then
+        chat_msg(8, 'Error: Exclusive mode is disabled.', false)
+      else
+        exclusive_mode = 'main'
+      end
+    elseif cmdArgs[2] == 'ranged' then
+      if not settings.is_exclusive_enabled then
+        chat_msg(8, 'Error: Exclusive mode is disabled.', false)
+      else
+        exclusive_mode = 'ranged'
+      end
+    end
+    unbind_ws(latest_ws_binds)
+    update_weaponskill_binds(true)
   else
     chat_msg(8, 'Invalid command. Type //wsb help for more info.', false)
   end

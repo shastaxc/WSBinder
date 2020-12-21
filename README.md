@@ -10,6 +10,7 @@ use 9 buttons for dagger weaponskills, and then changing your weapon to a sword 
 dagger WS keybinds and then set your sword keybinds.
 - Use common keybinds for a specific weapon regardless of your job (but with the ability to customize it per job).
 - Have all your keybinds defined in one place instead of in each individual job file.
+- Use main-hand and ranged WS keybinds at the same time (if defined without keybind overlap), or enable a toggle to share keybinds (see "exclusive mode").
 
 Override functionality is included so that you can define your own keybinds in a global file without having
 to modify this library lua.

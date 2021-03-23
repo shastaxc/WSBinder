@@ -26,7 +26,7 @@
 
 _addon.name = 'WSBinder'
 _addon.author = 'Silvermutt (Asura)'
-_addon.version = '1.0'
+_addon.version = '1.0.0'
 _addon.commands = {'wsbinder', 'wsb'}
 
 -------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ function initialize()
   defaults.target_modes = {}
   defaults.target_modes.main_hand = 't'
   defaults.target_modes.ranged = 't'
-  
+
   defaults.wstxt = {}
   defaults.wstxt.pos = {}
   defaults.wstxt.pos.x = 15
@@ -77,12 +77,12 @@ function initialize()
   defaults.wstxt.bg.red = 0
   defaults.wstxt.bg.green = 0
   defaults.wstxt.bg.blue = 0
-  
+
   defaults.show_overlay = true
   defaults.show_debug_messages = false
   defaults.show_range_highlight = true
   defaults.is_exclusive_enabled = false
-  
+
   -- Load binds from file and merge/overwrite defaults
   settings = config.load(defaults)
   ws_overlay = texts.new('${value}', settings.wstxt)
@@ -182,7 +182,7 @@ function display_overlay()
   for n,ws_data in ipairs(latest_ws_binds_pretty) do
     local ws = res.weapon_skills:with('en', ws_data.ws_name)
     local oor = is_out_of_range(ws.range, s, t)
-    
+
     -- Add to display list
     local mod_msg
     if ws_data.modifier then
@@ -215,7 +215,7 @@ function display_overlay()
       for i=1,spacer_size do
         spacer_msg = spacer_msg..' '
       end
-      if t and t.distance:sqrt() ~= 0 and not entry.is_oor and settings.show_range_highlight then 
+      if t and t.distance:sqrt() ~= 0 and not entry.is_oor and settings.show_range_highlight then
         display_msg = display_msg..spacer_msg..in_range_txt_color..entry.mod_msg..entry.key_msg..
             ' '..entry.ws_name_msg..normal_txt_color..'\n'
       else
@@ -358,7 +358,7 @@ function update_weaponskill_binds(force_update)
   end
 
   latest_ws_binds = merged_main_ranged_bindings
-    
+
   -- Make a separate table with good format for displaying in overlay
   latest_ws_binds_pretty = {}
   for keybind,ws_name in pairs(merged_main_ranged_bindings) do
@@ -444,7 +444,7 @@ function get_ws_bindings(weapon_type)
           key_sub_job = nil -- Nullify value to avoid binding
         end
       end
-      
+
       -- Get main/sub bindings
       if (is_key_main_sub_combo and key_main_job == player_main_job
           and key_sub_job == player_sub_job) then
@@ -455,7 +455,7 @@ function get_ws_bindings(weapon_type)
       end
     end
   end
-  
+
   -- Combine default, main job, and sub job bindings in that
   -- order to give priority to sub job bindings
   local job_merged_bindings = {}

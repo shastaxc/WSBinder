@@ -322,7 +322,7 @@ valid_keybinds = S{
   "p",
   "[",
   "]",
-  "\\",
+  "\\\\",
   "capslock",
   "a",
   "s",

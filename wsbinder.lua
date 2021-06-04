@@ -25,8 +25,8 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 _addon.name = 'WSBinder'
-_addon.author = 'Silvermutt (Asura)'
-_addon.version = '1.0.0'
+_addon.author = 'Shasta'
+_addon.version = '1.0.1'
 _addon.commands = {'wsbinder', 'wsb'}
 
 -------------------------------------------------------------------------------

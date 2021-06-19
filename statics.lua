@@ -25,23 +25,36 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 default_main_binds = {
-  ['Hand-to-Hand'] = {
+  ['Axe'] = {
     ['All'] = {
-      ['CTRL+numpad7'] = "Victory Smite", --empyrean
+      ['CTRL+numpad7'] = "Cloudsplitter", --empyrean
+      ['CTRL+numpad8'] = "Primal Rend", --mythic
+      ['CTRL+numpad9'] = "Onslaught", --relic
+      ['CTRL+numpad4'] = "Decimation", --ambuscade
+      ['CTRL+numpad5'] = "Ruinator", --aeonic
+      ['CTRL+numpad6'] = "Smash Axe",
+      ['CTRL+numpad1'] = "Rampage",
+      ['CTRL+numpad2'] = "Gale Axe", --elemental
+      ['CTRL+numpad3'] = "Bora Axe",
+    },
+  },
+  ['Club'] = {
+    ['All'] = {
+      ['CTRL+numpad7'] = "Dagan", --empyrean
       ['CTRL+numpad8'] = "", --mythic
-      ['CTRL+numpad9'] = "Final Heaven", --relic
-      ['CTRL+numpad4'] = "Asuran Fists", --ambuscade
-      ['CTRL+numpad5'] = "Shijin Spiral", --aeonic
-      ['CTRL+numpad6'] = "Shoulder Tackle",
-      ['CTRL+numpad1'] = "Spinning Attack", --aoe
-      ['CTRL+numpad2'] = "Raging Fists",
-      ['CTRL+numpad3'] = "Howling Fist",
+      ['CTRL+numpad9'] = "Randgrith", --relic
+      ['CTRL+numpad4'] = "Black Halo", --ambuscade
+      ['CTRL+numpad5'] = "Realmrazer", --aeonic
+      ['CTRL+numpad6'] = "Brainshaker",
+      ['CTRL+numpad1'] = "Hexa Strike",
+      ['CTRL+numpad2'] = "Seraph Strike", --elemental
+      ['CTRL+numpad3'] = "Skullbreaker",
     },
-    ['MNK'] = {
-      ['CTRL+numpad8'] = "Ascetic's Fury", --mythic
+    ['GEO'] = {
+      ['CTRL+numpad8'] = "Exudation", --mythic
     },
-    ['PUP'] = {
-      ['CTRL+numpad8'] = "Stringing Pummel", --mythic
+    ['WHM'] = {
+      ['CTRL+numpad8'] = "Mystic Boon", --mythic
     },
   },
   ['Dagger'] = {
@@ -56,62 +69,14 @@ default_main_binds = {
       ['CTRL+numpad2'] = "Cyclone", --elemental
       ['CTRL+numpad3'] = "Energy Drain", --elemental
     },
-    ['THF'] = {
-      ['CTRL+numpad8'] = "Mandalic Stab", --mythic
+    ['BRD'] = {
+      ['CTRL+numpad8'] = "Mordant Rime", --mythic
     },
     ['DNC'] = {
       ['CTRL+numpad8'] = "Pyrrhic Kleos", --mythic
     },
-    ['BRD'] = {
-      ['CTRL+numpad8'] = "Mordant Rime", --mythic
-    },
-  },
-  ['Sword'] = {
-    ['All'] = {
-      ['CTRL+numpad7'] = "Chant du Cygne", --empyrean
-      ['CTRL+numpad8'] = "", --mythic
-      ['CTRL+numpad9'] = "Knights of Round", --relic
-      ['CTRL+numpad4'] = "Savage Blade", --ambuscade
-      ['CTRL+numpad5'] = "Requiescat", --aeonic
-      ['CTRL+numpad6'] = "Sanguine Blade",
-      ['CTRL+numpad1'] = "Circle Blade", --aoe
-      ['CTRL+numpad2'] = "Red Lotus Blade", --elemental
-      ['CTRL+numpad3'] = "Seraph Blade", --elemental
-    },
-    ['RDM'] = {
-      ['CTRL+numpad8'] = "Death Blossom", --mythic
-    },
-    ['PLD'] = {
-      ['CTRL+numpad8'] = "Atonement", --mythic
-    },
-    ['BLU'] = {
-      ['CTRL+numpad8'] = "Expiacion", --mythic
-    },
-  },
-  ['Great Sword'] = {
-    ['All'] = {
-      ['CTRL+numpad7'] = "Torcleaver", --empyrean
-      ['CTRL+numpad8'] = "Dimidiation", --mythic
-      ['CTRL+numpad9'] = "Scourge", --relic
-      ['CTRL+numpad4'] = "Ground Strike", --ambuscade
-      ['CTRL+numpad5'] = "Resolution", --aeonic
-      ['CTRL+numpad6'] = "Power Slash",
-      ['CTRL+numpad1'] = "Shockwave", --aoe
-      ['CTRL+numpad2'] = "Freezebite", --elemental
-      ['CTRL+numpad3'] = "Herculean Slash",
-    },
-  },
-  ['Axe'] = {
-    ['All'] = {
-      ['CTRL+numpad7'] = "Cloudsplitter", --empyrean
-      ['CTRL+numpad8'] = "Primal Rend", --mythic
-      ['CTRL+numpad9'] = "Onslaught", --relic
-      ['CTRL+numpad4'] = "Decimation", --ambuscade
-      ['CTRL+numpad5'] = "Ruinator", --aeonic
-      ['CTRL+numpad6'] = "Smash Axe",
-      ['CTRL+numpad1'] = "Rampage",
-      ['CTRL+numpad2'] = "Gale Axe", --elemental
-      ['CTRL+numpad3'] = "Bora Axe",
+    ['THF'] = {
+      ['CTRL+numpad8'] = "Mandalic Stab", --mythic
     },
   },
   ['Great Axe'] = {
@@ -127,30 +92,49 @@ default_main_binds = {
       ['CTRL+numpad3'] = "Armor Break",
     },
   },
-  ['Scythe'] = {
+  ['Great Katana'] = {
     ['All'] = {
-      ['CTRL+numpad7'] = "Quietus", --empyrean
-      ['CTRL+numpad8'] = "Insurgency", --mythic
-      ['CTRL+numpad9'] = "Catastrophe", --relic
-      ['CTRL+numpad4'] = "Spiral Hell", --ambuscade
-      ['CTRL+numpad5'] = "Entropy", --aeonic
-      ['CTRL+numpad6'] = "Cross Reaper",
-      ['CTRL+numpad1'] = "Spinning Scythe", --aoe
-      ['CTRL+numpad2'] = "Shadow of Death", --elemental
-      ['CTRL+numpad3'] = "Nightmare Scythe",
+      ['CTRL+numpad7'] = "Tachi: Fudo", --empyrean
+      ['CTRL+numpad8'] = "Tachi: Rana", --mythic
+      ['CTRL+numpad9'] = "Tachi: Kaiten", --relic
+      ['CTRL+numpad4'] = "Tachi: Kasha", --ambuscade
+      ['CTRL+numpad5'] = "Tachi: Shoha", --aeonic
+      ['CTRL+numpad6'] = "Tachi: Gekko",
+      ['CTRL+numpad1'] = "Tachi: Ageha",
+      ['CTRL+numpad2'] = "Tachi: Jinpu", --elemental
+      ['CTRL+numpad3'] = "Tachi: Koki", --elemental
     },
   },
-  ['Polearm'] = {
+  ['Great Sword'] = {
     ['All'] = {
-      ['CTRL+numpad7'] = "Camlann's Torment", --empyrean
-      ['CTRL+numpad8'] = "Drakesbane", --mythic
-      ['CTRL+numpad9'] = "Geirskogul", --relic
-      ['CTRL+numpad4'] = "Impulse Drive", --ambuscade
-      ['CTRL+numpad5'] = "Stardiver", --aeonic
-      ['CTRL+numpad6'] = "Leg Sweep",
-      ['CTRL+numpad1'] = "Sonic Thrust", --aoe
-      ['CTRL+numpad2'] = "Raiden Thrust", --elemental
-      ['CTRL+numpad3'] = "Penta Thrust",
+      ['CTRL+numpad7'] = "Torcleaver", --empyrean
+      ['CTRL+numpad8'] = "Dimidiation", --mythic
+      ['CTRL+numpad9'] = "Scourge", --relic
+      ['CTRL+numpad4'] = "Ground Strike", --ambuscade
+      ['CTRL+numpad5'] = "Resolution", --aeonic
+      ['CTRL+numpad6'] = "Power Slash",
+      ['CTRL+numpad1'] = "Shockwave", --aoe
+      ['CTRL+numpad2'] = "Freezebite", --elemental
+      ['CTRL+numpad3'] = "Herculean Slash",
+    },
+  },
+  ['Hand-to-Hand'] = {
+    ['All'] = {
+      ['CTRL+numpad7'] = "Victory Smite", --empyrean
+      ['CTRL+numpad8'] = "", --mythic
+      ['CTRL+numpad9'] = "Final Heaven", --relic
+      ['CTRL+numpad4'] = "Asuran Fists", --ambuscade
+      ['CTRL+numpad5'] = "Shijin Spiral", --aeonic
+      ['CTRL+numpad6'] = "Howling Fist",
+      ['CTRL+numpad1'] = "Spinning Attack", --aoe
+      ['CTRL+numpad2'] = "Raging Fists",
+      ['CTRL+numpad3'] = "Howling Fist",
+    },
+    ['MNK'] = {
+      ['CTRL+numpad8'] = "Ascetic's Fury", --mythic
+    },
+    ['PUP'] = {
+      ['CTRL+numpad8'] = "Stringing Pummel", --mythic
     },
   },
   ['Katana'] = {
@@ -166,36 +150,30 @@ default_main_binds = {
       ['CTRL+numpad3'] = "Blade: Ten",
     },
   },
-  ['Great Katana'] = {
+  ['Polearm'] = {
     ['All'] = {
-      ['CTRL+numpad7'] = "Tachi: Fudo", --empyrean
-      ['CTRL+numpad8'] = "Tachi: Rana", --mythic
-      ['CTRL+numpad9'] = "Tachi: Kaiten", --relic
-      ['CTRL+numpad4'] = "Tachi: Kasha", --ambuscade
-      ['CTRL+numpad5'] = "Tachi: Shoha", --aeonic
-      ['CTRL+numpad6'] = "Tachi: Hobaku",
-      ['CTRL+numpad1'] = "Tachi: Gekko",
-      ['CTRL+numpad2'] = "Tachi: Jinpu", --elemental
-      ['CTRL+numpad3'] = "Tachi: Koki", --elemental
+      ['CTRL+numpad7'] = "Camlann's Torment", --empyrean
+      ['CTRL+numpad8'] = "Drakesbane", --mythic
+      ['CTRL+numpad9'] = "Geirskogul", --relic
+      ['CTRL+numpad4'] = "Impulse Drive", --ambuscade
+      ['CTRL+numpad5'] = "Stardiver", --aeonic
+      ['CTRL+numpad6'] = "Leg Sweep",
+      ['CTRL+numpad1'] = "Sonic Thrust", --aoe
+      ['CTRL+numpad2'] = "Raiden Thrust", --elemental
+      ['CTRL+numpad3'] = "Penta Thrust",
     },
   },
-  ['Club'] = {
+  ['Scythe'] = {
     ['All'] = {
-      ['CTRL+numpad7'] = "Dagan", --empyrean
-      ['CTRL+numpad8'] = "", --mythic
-      ['CTRL+numpad9'] = "Randgrith", --relic
-      ['CTRL+numpad4'] = "Black Halo", --ambuscade
-      ['CTRL+numpad5'] = "Realmrazer", --aeonic
-      ['CTRL+numpad6'] = "Brainshaker",
-      ['CTRL+numpad1'] = "Hexa Strike",
-      ['CTRL+numpad2'] = "Seraph Strike", --elemental
-      ['CTRL+numpad3'] = "Skullbreaker",
-    },
-    ['WHM'] = {
-      ['CTRL+numpad8'] = "Mystic Boon", --mythic
-    },
-    ['GEO'] = {
-      ['CTRL+numpad8'] = "Exudation", --mythic
+      ['CTRL+numpad7'] = "Quietus", --empyrean
+      ['CTRL+numpad8'] = "Insurgency", --mythic
+      ['CTRL+numpad9'] = "Catastrophe", --relic
+      ['CTRL+numpad4'] = "Spiral Hell", --ambuscade
+      ['CTRL+numpad5'] = "Entropy", --aeonic
+      ['CTRL+numpad6'] = "Cross Reaper",
+      ['CTRL+numpad1'] = "Spinning Scythe", --aoe
+      ['CTRL+numpad2'] = "Shadow of Death", --elemental
+      ['CTRL+numpad3'] = "Nightmare Scythe",
     },
   },
   ['Staff'] = {
@@ -213,11 +191,33 @@ default_main_binds = {
     ['BLM'] = {
       ['CTRL+numpad8'] = "Vidohunir", --mythic
     },
+    ['SCH'] = {
+      ['CTRL+numpad8'] = "Omniscience", --mythic
+    },
     ['SMN'] = {
       ['CTRL+numpad8'] = "Garland of Bliss", --mythic
     },
-    ['SCH'] = {
-      ['CTRL+numpad8'] = "Omniscience", --mythic
+  },
+  ['Sword'] = {
+    ['All'] = {
+      ['CTRL+numpad7'] = "Chant du Cygne", --empyrean
+      ['CTRL+numpad8'] = "", --mythic
+      ['CTRL+numpad9'] = "Knights of Round", --relic
+      ['CTRL+numpad4'] = "Savage Blade", --ambuscade
+      ['CTRL+numpad5'] = "Requiescat", --aeonic
+      ['CTRL+numpad6'] = "Sanguine Blade",
+      ['CTRL+numpad1'] = "Circle Blade", --aoe
+      ['CTRL+numpad2'] = "Red Lotus Blade", --elemental
+      ['CTRL+numpad3'] = "Seraph Blade", --elemental
+    },
+    ['BLU'] = {
+      ['CTRL+numpad8'] = "Expiacion", --mythic
+    },
+    ['PLD'] = {
+      ['CTRL+numpad8'] = "Atonement", --mythic
+    },
+    ['RDM'] = {
+      ['CTRL+numpad8'] = "Death Blossom", --mythic
     },
   }
 }
@@ -261,13 +261,13 @@ default_ranged_binds = {
       ['ALT+numpad2'] = "Hot Shot", --elemental
       ['ALT+numpad3'] = "Numbing Shot",
     },
-    ['RNG'] = {
-      ['ALT+numpad8'] = "Trueflight", --mythic
-      ['ALT+numpad5'] = "Last Stand", --aeonic
-      ['ALT+numpad9'] = "Coronach", --relic
-    },
     ['COR'] = {
       ['ALT+numpad8'] = "Leaden Salute", --mythic
+      ['ALT+numpad5'] = "Last Stand", --aeonic
+    },
+    ['RNG'] = {
+      ['ALT+numpad8'] = "Trueflight", --mythic
+      ['ALT+numpad9'] = "Coronach", --relic
       ['ALT+numpad5'] = "Last Stand", --aeonic
     },
   },

@@ -26,7 +26,7 @@
 
 _addon.name = 'WSBinder'
 _addon.author = 'Shasta'
-_addon.version = '1.0.1'
+_addon.version = '1.1.0'
 _addon.commands = {'wsbinder', 'wsb'}
 
 -------------------------------------------------------------------------------

@@ -171,7 +171,9 @@ function chat_msg(color, msg, is_debug)
 end
 
 function display_overlay()
-  if not settings.show_overlay then
+  -- Check if settings say to show the overlay
+  -- Check if character is loaded before showing overlay
+  if not settings.show_overlay or not windower.ffxi.get_info().logged_in then
     return
   end
   local t = windower.ffxi.get_mob_by_target('t') or windower.ffxi.get_mob_by_target('st')

@@ -1,4 +1,4 @@
--- Copyright © 2020, Silvermutt (Asura)
+-- Copyright © 2021, Shasta
 -- All rights reserved.
 
 -- Redistribution and use in source and binary forms, with or without

@@ -114,6 +114,7 @@ function initialize()
   player.equipment = {}
   inventory_loaded = false
   exclusive_mode = 'main'
+  valid_skill_types = S{1,2,3,4,5,6,7,8,9,10,11,12,25,26}
 end
 
 -------------------------------------------------------------------------------
@@ -276,13 +277,13 @@ function update_weaponskill_binds(force_update)
     main_weapon_type = 'Hand-to-Hand'
   else -- Handle equipped weapons case
     main_weapon = res.items:with('name', player.equipment.main)
-    main_weapon_type = res.skills[main_weapon.skill].en
+    main_weapon_type = valid_skill_types[main_weapon.skill] and res.skills[main_weapon.skill].en
   end
 
   -- Get ranged weapon and type
   if player.equipment.range ~= nil and player.equipment.range ~= 0 and player.equipment.range ~= 'empty' then
     ranged_weapon = res.items:with('name', player.equipment.range)
-    ranged_weapon_type = res.skills[ranged_weapon.skill].en
+    ranged_weapon_type = valid_skill_types[ranged_weapon.skill] and res.skills[ranged_weapon.skill].en
   end
 
   has_main_weapon_changed = main_weapon_type ~= current_main_weapon_type

@@ -26,7 +26,7 @@
 
 _addon.name = 'WSBinder'
 _addon.author = 'Shasta'
-_addon.version = '1.1.0'
+_addon.version = '1.2.0'
 _addon.commands = {'wsbinder', 'wsb'}
 
 -------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ function display_overlay()
 
   for n,ws_data in ipairs(latest_ws_binds_pretty) do
     local ws = res.weapon_skills:with('en', ws_data.ws_name)
-    local oor = is_out_of_range(ws.range, s, t)
+    local oor = not ws.targets['Self'] and is_out_of_range(ws.range, s, t)
 
     -- Add to display list
     local mod_msg
@@ -196,7 +196,7 @@ function display_overlay()
     local key_msg = ws_data.key
     local ws_name_msg = ws_data.ws_name
     local col_spacer
-    msg_list[n] = {mod_msg=mod_msg, key_msg=key_msg, ws_name_msg=ws_name_msg, is_oor=oor, char_count=nil}
+    msg_list[n] = {mod_msg=mod_msg, key_msg=key_msg, ws_name_msg=ws_name_msg, is_self_target=ws.targets['Self'], is_oor=oor, char_count=nil}
   end
 
   -- Find longest message for use in creating spacers
@@ -218,7 +218,7 @@ function display_overlay()
       for i=1,spacer_size do
         spacer_msg = spacer_msg..' '
       end
-      if t and t.distance:sqrt() ~= 0 and not entry.is_oor and settings.show_range_highlight then
+      if settings.show_range_highlight and (entry.is_self_target or (t and t.distance:sqrt() ~= 0 and not entry.is_oor))  then
         display_msg = display_msg..spacer_msg..in_range_txt_color..entry.mod_msg..entry.key_msg..
             ' '..entry.ws_name_msg..normal_txt_color..'\n'
       else
@@ -353,7 +353,9 @@ function update_weaponskill_binds(force_update)
     local is_main_hand_keybind = ws.skill > 0 and ws.skill < 13 -- Skill ID 1-12 are main hand
     local target_mode_main = settings.target_modes.main_hand
     local target_mode_ranged = settings.target_modes.ranged
-    if is_main_hand_keybind then
+    if ws.targets['Self'] then
+      windower.send_command("bind "..keybind.." input /ws \""..ws_name.."\" <me>")
+    elseif is_main_hand_keybind then
       windower.send_command("bind "..keybind.." input /ws \""..ws_name.."\" <"..settings.target_modes.main_hand..">")
     else
       windower.send_command("bind "..keybind.." input /ws \""..ws_name.."\" <"..settings.target_modes.ranged..">")

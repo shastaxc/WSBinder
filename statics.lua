@@ -168,12 +168,12 @@ default_main_binds = {
       ['CTRL+numpad7'] = "Quietus", --empyrean
       ['CTRL+numpad8'] = "Insurgency", --mythic
       ['CTRL+numpad9'] = "Catastrophe", --relic
-      ['CTRL+numpad4'] = "Spiral Hell", --ambuscade
+      ['CTRL+numpad4'] = "Origin",
       ['CTRL+numpad5'] = "Entropy", --aeonic
       ['CTRL+numpad6'] = "Cross Reaper",
       ['CTRL+numpad1'] = "Spinning Scythe", --aoe
       ['CTRL+numpad2'] = "Shadow of Death", --elemental
-      ['CTRL+numpad3'] = "Nightmare Scythe",
+      ['CTRL+numpad3'] = "Guillotine",
     },
   },
   ['Staff'] = {

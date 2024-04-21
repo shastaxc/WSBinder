@@ -1,4 +1,4 @@
--- Copyright © 2020-2023, Shasta
+-- Copyright © 2020-2024, Shasta
 -- All rights reserved.
 
 -- Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 
 _addon.name = 'WSBinder'
 _addon.author = 'Shasta'
-_addon.version = '1.2.0'
+_addon.version = '1.2.1'
 _addon.commands = {'wsbinder', 'wsb'}
 
 -------------------------------------------------------------------------------
@@ -760,16 +760,15 @@ windower.register_event('addon command', function(...)
 end)
 
 -- Executes on every frame. This is a way to create a perpetual loop.
-frame_count = 0
+timer = os.clock()
 windower.register_event('prerender',function()
-  -- Use frame count to limit execution rate (roughly 0.25-0.5 seconds depending on FPS)
-  if frame_count%15 == 0 and windower.ffxi.get_info().logged_in and windower.ffxi.get_player() then
+  local now = os.clock()
+  -- Limit execution rate to every 0.5 seconds
+  if now - timer > 0.5 and windower.ffxi.get_info().logged_in and windower.ffxi.get_player() then
+    timer = os.clock()
     check_equipped()
     update_weaponskill_binds()
     display_overlay()
-    frame_count = 0
-  else
-    frame_count = frame_count + 1
   end
 end)
 

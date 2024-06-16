@@ -107,7 +107,7 @@ function initialize()
   -------------------------------------------------------------------------------
   current_weapon_type = nil
   current_ranged_weapon_type = nil
-  latest_ws_binds = {} -- format: { [keybind"] = "ws name" }
+  latest_ws_binds = {} -- format: { ["keybind"] = "ws name" }
   latest_ws_binds_pretty = {} -- format: { [1] = { weapon_type ="weapon type", modifier="mod", key="key", ws_name="ws name" }}
   is_changing_job = nil
   player = {}

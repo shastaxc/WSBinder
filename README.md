@@ -39,7 +39,7 @@ There are some commands you can use to interact with the WSBinder addon from in-
 | `visible`              | `show`/`hide` | Toggles visibility on the overlay that shows your current keybinds               |
 | `showrange`            | `showranges`  | Toggles highlighting of the keybinds (will highlight when in range)              |
 | `targetmode main`      | `tm m`        | Toggles the target mode for main hand WS's between `<t>` and `<stnpc>`           |
-| `targetmode main`      | `tm m`        | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>`         |
+| `targetmode range`     | `tm r`        | Toggles the target mode for ranged hand WS's between `<t>` and `<stnpc>`         |
 | `exclusivemode on`     | `em on`       | Grants the ability to use exclusive mode.                                        |
 | `exclusivemode off`    | `em off`      | Removes the ability to use exclusive mode.                                       |
 | `exclusivemode main`   | `em main`     | Sets exclusive mode to only bind/display main WS's. (only works if `em` is on)   |

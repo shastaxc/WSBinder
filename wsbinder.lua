@@ -26,7 +26,7 @@
 
 _addon.name = 'WSBinder'
 _addon.author = 'Shasta'
-_addon.version = '1.2.1'
+_addon.version = '1.2.2'
 _addon.commands = {'wsbinder', 'wsb'}
 
 -------------------------------------------------------------------------------
@@ -677,10 +677,13 @@ windower.register_event('addon command', function(...)
     windower.send_command('lua r wsbinder')
   elseif cmdArgs[1] == 'targetmode' or cmdArgs[1] == 'tm' then
     local ws_type = cmdArgs[2]
+    local display_type
     if ws_type == 'main_hand' or ws_type == 'main' or ws_type == 'm' then
       ws_type = 'main_hand'
+      display_type = 'main hand'
     elseif ws_type == 'ranged' or ws_type == 'range' or ws_type == 'r' then
       ws_type = 'ranged'
+      display_type = 'ranged'
     else
       chat_msg(8, 'Invalid command. Type //wsb help for more info.', false)
       ws_type = nil
@@ -701,7 +704,7 @@ windower.register_event('addon command', function(...)
 
       settings.target_modes[ws_type] = new_mode
       config.save(settings)
-      chat_msg(8, 'WS target mode for '..ws_type..' now set to <'..new_mode..'>.', false)
+      chat_msg(8, 'WS target mode for '..display_type..' now set to <'..new_mode..'>.', false)
       update_weaponskill_binds(true)
     end
   elseif cmdArgs[1] == 'list' or cmdArgs[1] == 'visible'

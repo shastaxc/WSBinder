@@ -33,7 +33,7 @@ default_main_binds = {
       ['CTRL+numpad4'] = "Decimation", --ambuscade
       ['CTRL+numpad5'] = "Ruinator", --aeonic
       ['CTRL+numpad6'] = "Smash Axe",
-      ['CTRL+numpad1'] = "Rampage",
+      ['CTRL+numpad1'] = "Calamity",
       ['CTRL+numpad2'] = "Gale Axe", --elemental
       ['CTRL+numpad3'] = "Bora Axe",
     },
@@ -112,7 +112,7 @@ default_main_binds = {
       ['CTRL+numpad9'] = "Scourge", --relic
       ['CTRL+numpad4'] = "Ground Strike", --ambuscade
       ['CTRL+numpad5'] = "Resolution", --aeonic
-      ['CTRL+numpad6'] = "Power Slash",
+      ['CTRL+numpad6'] = "Spinning Slash",
       ['CTRL+numpad1'] = "Shockwave", --aoe
       ['CTRL+numpad2'] = "Freezebite", --elemental
       ['CTRL+numpad3'] = "Herculean Slash",

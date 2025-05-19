@@ -202,7 +202,7 @@ default_main_binds = {
     ['All'] = {
       ['CTRL+numpad7'] = "Chant du Cygne", --empyrean
       ['CTRL+numpad8'] = "", --mythic
-      ['CTRL+numpad9'] = "Knights of Round", --relic
+      ['CTRL+numpad9'] = "Fast Blade II",
       ['CTRL+numpad4'] = "Savage Blade", --ambuscade
       ['CTRL+numpad5'] = "Requiescat", --aeonic
       ['CTRL+numpad6'] = "Sanguine Blade",
@@ -213,11 +213,16 @@ default_main_binds = {
     ['BLU'] = {
       ['CTRL+numpad8'] = "Expiacion", --mythic
     },
+    ['DNC'] = {
+      ['CTRL+numpad4'] = "Fast Blade II",
+    },
     ['PLD'] = {
       ['CTRL+numpad8'] = "Atonement", --mythic
+      ['CTRL+numpad9'] = "Knights of Round", --relic
     },
     ['RDM'] = {
       ['CTRL+numpad8'] = "Death Blossom", --mythic
+      ['CTRL+numpad9'] = "Knights of Round", --relic
     },
   }
 }
